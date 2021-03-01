@@ -216,7 +216,7 @@ public class CatalogResources {
 					Utils.debugLog("CatalogResources.DownloadEntryByName: file ok return content");
 					oResponseBuilder = Response.ok(oStream);
 					oResponseBuilder.header("Content-Disposition", "attachment; filename="+ oFile.getName());
-					oResponseBuilder.header("Content-Length", Long.toString(oFile.length()));
+					//oResponseBuilder.header("Content-Length", Long.toString(oFile.length()));
 				}
 			}
 			Utils.debugLog("CatalogResources.DownloadEntryByName: done, return");
@@ -301,7 +301,7 @@ public class CatalogResources {
 				lLength += oTempFile.length();
 			}
 		}
-		oResponseBuilder.header("Content-Length", lLength);
+		//oResponseBuilder.header("Content-Length", lLength);
 		Utils.debugLog("CatalogResources.zipOnTheFlyAndStream: return ");
 		return oResponseBuilder.build();
 	}
@@ -366,7 +366,7 @@ public class CatalogResources {
 				lLength += oTempFile.length();
 			}
 		}
-		oResponseBuilder.header("Content-Length", lLength);
+		//oResponseBuilder.header("Content-Length", lLength);
 		Utils.debugLog("CatalogResources.zipShapeFile: return ");
 		return oResponseBuilder.build();
 	}
