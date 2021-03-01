@@ -272,9 +272,7 @@ public class ProcessorRepository extends  MongoRepository {
 	}
 	
 	public long countProcessors(boolean bInAppStoreOnly, boolean bPublicOnly) {
-		try {
-			BasicDBObject oQuery = new BasicDBObject();
-			
+		try {			
 			BasicDBObject oPublicOnlyQuery = null;
 			if(bPublicOnly) {
 				oPublicOnlyQuery = new BasicDBObject("isPublic", 1);
@@ -302,6 +300,7 @@ public class ProcessorRepository extends  MongoRepository {
 				List<BasicDBObject> aoAndList = new ArrayList<>();
 				aoAndList.add(oPublicOnlyQuery);
 				aoAndList.add(oInStoreOnlyQuery);
+				BasicDBObject oQuery = new BasicDBObject();
 				oQuery.put("$and", aoAndList);
 				return getCollection(m_sThisCollection).count(oQuery);
 			}
