@@ -221,7 +221,7 @@ public class ProcessorRepository extends  MongoRepository {
      * @return List of all the processors
      */
     public List<Processor> getDeployedProcessors() {
-        return getDeployedProcessors("_id");
+        return getDeployedProcessors("userId");
     }
     
     public List<Processor> getDeployedProcessors(String sOrderBy) {
