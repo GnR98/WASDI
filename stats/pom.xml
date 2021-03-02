@@ -11,6 +11,11 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<name>Wasdi stats</name>
 
+	<properties>
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
+	</properties>
+
 	<dependencies>
 		<dependency>
 			<groupId>fadeout.software.wasdi</groupId>
@@ -32,6 +37,25 @@
 			<groupId>com.google.apis</groupId>
 			<artifactId>google-api-services-sheets</artifactId>
 			<version>v4-rev493-1.23.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-api</artifactId>
+			<version>5.7.0</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-params</artifactId>
+			<version>5.7.0</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.assertj</groupId>
+			<artifactId>assertj-core</artifactId>
+			<version>3.18.1</version>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 
