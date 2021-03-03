@@ -2,6 +2,8 @@ package wasdi.shared.data;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 import org.bson.Document;
 import org.bson.conversions.Bson;
@@ -13,6 +15,7 @@ import com.mongodb.client.result.DeleteResult;
 import com.mongodb.client.result.UpdateResult;
 
 import wasdi.shared.business.User;
+import wasdi.shared.utils.TimeEpochUtils;
 import wasdi.shared.utils.Utils;
 
 /**
@@ -230,6 +233,35 @@ public class UserRepository extends  MongoRepository{
 	public long countUsers() {
 		return getCollection(m_sThisCollection).count();
 		
+	}
+	
+
+	public List<User> getActiveUsers (int iLastDays){
+		List<User> aoAllUsers = getAllUsers();
+		List<User> aoSelectedUsers = new ArrayList<>();
+		Long lThreshold = iLastDays*1000*60*60*24l;
+		long lNow = System.currentTimeMillis();
+		for (User oUser : aoAllUsers) {
+			try {
+				if(null==oUser) {
+					continue;
+				}
+				if(null == oUser.getLastLogin()) {
+					continue;
+				}
+				Long lLastLogin = TimeEpochUtils.fromDateStringToEpoch(oUser.getLastLogin(), "EEE MMM dd HH:mm:ss zzz yyyy");
+				if(null==lLastLogin) {
+					continue;
+				}
+				Long lDuration = lNow - lLastLogin;
+				if(lDuration < lThreshold) {
+					aoSelectedUsers.add(oUser);
+				}
+			} catch (Exception oE) {
+				Utils.debugLog("UserRepository.getActiveUsers( " + iLastDays + " ): " + oE);
+			}
+		}
+		return aoSelectedUsers;
 	}
 
 
