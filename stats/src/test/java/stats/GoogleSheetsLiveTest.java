@@ -48,20 +48,25 @@ public class GoogleSheetsLiveTest {
 
 	@Test
 	public void whenWriteSheet_thenReadSheetOk() throws IOException {
+		//set of rows
 		ValueRange oBody = new ValueRange().setValues(
 				TypeConversionUtils.getListOfListsOfObjects(
-								Arrays.asList(Arrays.asList("Expenses January"),
+							Arrays.asList(
+								Arrays.asList("Expenses January"),
 								Arrays.asList("books", "30"),
 								Arrays.asList("pens", "10"),
 								Arrays.asList("Expenses February"),
 								Arrays.asList("clothes", "20"),
-								Arrays.asList("shoes", "5"))
+								Arrays.asList("shoes", "5")
+							)
 						)
 				);
 		UpdateValuesResponse oResult = s_oSheetsService.spreadsheets().values()
 				.update(SPREADSHEET_ID, "A1", oBody)
 				.setValueInputOption("RAW").execute();
 
+		
+		
 		List<ValueRange> oData = new ArrayList<>();
 		oData.add(new ValueRange().setRange("D1").setValues(
 				TypeConversionUtils.getListOfListsOfObjects(Arrays.asList(Arrays.asList("January Total", "=B2+B3"))))
