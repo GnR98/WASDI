@@ -22,7 +22,7 @@ import wasdi.shared.data.UserRepository;
  * This class calculates some basic stats about the usage of WASDI
  *
  */
-public class WasdiStats {
+public class OldWasdiStats {
 
 
 	/**
@@ -41,7 +41,7 @@ public class WasdiStats {
 		}
 
 
-		WasdiStats oStatsCalculator = new WasdiStats();		
+		OldWasdiStats oStatsCalculator = new OldWasdiStats();		
 		JSONObject oStats = new JSONObject();
 		
 		//stats on processors
