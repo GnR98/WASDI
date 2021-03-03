@@ -20,6 +20,7 @@ import com.mongodb.client.model.Filters;
 import wasdi.shared.LauncherOperations;
 import wasdi.shared.business.ProcessStatus;
 import wasdi.shared.business.ProcessWorkspace;
+import wasdi.shared.business.User;
 import wasdi.shared.utils.Utils;
 
 /**
@@ -1326,6 +1327,33 @@ public class ProcessWorkspaceRepository extends MongoRepository {
         }
 
         return aoReturnList;
-    }	
+    }
+
+    /**
+     * @return a list of all process workspace
+     */
+    public List<ProcessWorkspace> getAll() {
+    	FindIterable<Document> oDocuments = getCollection(m_sThisCollection).find();
+    	final List<ProcessWorkspace> aoReturnList = new ArrayList<ProcessWorkspace>();
+
+    	oDocuments.forEach(new Block<Document>() 
+    	{
+    		public void apply(Document document) 
+    		{
+    			String sJSON = document.toJson();
+    			ProcessWorkspace oProcessWorkspace = null;
+    			try {
+    				oProcessWorkspace = s_oMapper.readValue(sJSON,ProcessWorkspace.class);
+    				aoReturnList.add(oProcessWorkspace);
+    			} catch (IOException e) {
+    				e.printStackTrace();
+    			}
+
+    		}
+    	});
+
+    	return aoReturnList;
+    }
+
 
 }
