@@ -36,9 +36,17 @@ public class TimeEpochUtils {
 	}
 
 	public static Long fromDateStringToEpoch(String sDate) {
+		return fromDateStringToEpoch(sDate, null);
+	}
+	
+	public static Long fromDateStringToEpoch(String sDate, String sFormat) {
+		if(Utils.isNullOrEmpty(sFormat)){
+			//try default
+			sFormat = TimeEpochUtils.s_sDATEFORMAT;
+		}
 		Long lEpochMilliSeconds = null;
 		try {
-			SimpleDateFormat oSimpleDateFormat = new SimpleDateFormat(TimeEpochUtils.s_sDATEFORMAT);
+			SimpleDateFormat oSimpleDateFormat = new SimpleDateFormat(sFormat);
 			oSimpleDateFormat.setTimeZone(TimeZone.getTimeZone(TimeEpochUtils.s_sTIMEZONE));
 			Date oDate = oSimpleDateFormat.parse(sDate);
 			lEpochMilliSeconds = oDate.getTime();
@@ -46,7 +54,7 @@ public class TimeEpochUtils {
 			Utils.log("ERROR", "Utils.fromDateStringToTimestamp: " + oE);
 		}
 		return lEpochMilliSeconds;
-
 	}
+
 
 }
