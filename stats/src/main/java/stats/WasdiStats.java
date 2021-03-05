@@ -3,7 +3,12 @@
  */
 package stats;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -21,10 +26,10 @@ import wasdi.shared.business.ProcessWorkspace;
 import wasdi.shared.business.Processor;
 import wasdi.shared.business.User;
 import wasdi.shared.data.MongoRepository;
-import wasdi.shared.data.ProcessWorkspaceRepository;
 import wasdi.shared.data.ProcessorRepository;
 import wasdi.shared.data.UserRepository;
 import wasdi.shared.utils.TypeConversionUtils;
+import wasdi.shared.utils.Utils;
 
 /**
  * @author c.nattero
@@ -35,8 +40,18 @@ public class WasdiStats {
 
 	private static Sheets s_oSheetsService;
 	private static Map<String, Integer> s_aiSheetIds = new HashMap<>();
+	private static String s_sSheetId = null;
 	private static final String s_sWHAT_IF_GID = "what-if.gid";
 	private static final String s_sUSERS_GID = "users.gid";
+	private static final String s_sCOMMA_DELIMITER = ",";
+	private static final long s_lMAX_BYTES = (long)((double)(10485760 * 0.8));
+	
+	private Map<String,User> m_aoAllUsers;
+	//user -> Map of lists of processors -> one list per tree
+	private Map<String, Map<String, List<ProcessWorkspace>>> m_aoAllProcessWorkspaces;
+
+	//WARNING: rows in spreadsheets start at 1, not 0
+	private int m_iNextFreeRow = 1;
 
 	/**
 	 * @param args
@@ -47,7 +62,7 @@ public class WasdiStats {
 		try {
 
 			//google sheets
-			String sSheetId = ConfigReader.getPropValue("Google_sheet_ID");
+			s_sSheetId = ConfigReader.getPropValue("Google_sheet_ID");
 			String sWhatIfGid = ConfigReader.getPropValue(s_sWHAT_IF_GID);
 			s_aiSheetIds.put(s_sWHAT_IF_GID, Integer.parseInt(sWhatIfGid));
 
@@ -61,9 +76,13 @@ public class WasdiStats {
 
 			WasdiStats oWasdiStats = new WasdiStats();
 
-			oWasdiStats.writeUsersStats(sSheetId);
+			oWasdiStats.loadUsers();
+			oWasdiStats.loadProcessWorkspaces();
 			
-			oWasdiStats.writeProcessWorkspaceStats(sSheetId);
+			oWasdiStats.writeUsersStats();
+
+			//disabled: we have too many rows for google spreasdheets
+			//oWasdiStats.writeProcessWorkspaceStats();
 
 
 
@@ -74,18 +93,172 @@ public class WasdiStats {
 	}
 
 
-	private void writeProcessWorkspaceStats(String sSheetId) {
-		ProcessWorkspaceRepository oProcessWorkspace = new ProcessWorkspaceRepository();
-		List<ProcessWorkspace> aoProcessWorkspaces = oProcessWorkspace.getAll();
-		//TODO dump list onto sheet 
+	private void loadProcessWorkspaces() {
+		m_aoAllProcessWorkspaces = new HashMap<>();
 		
-		//TODO do this for every node... how to connect? Rather use a new API?
-		
-		
+		Path oWorkingDirectory = Paths.get(System.getProperty("user.dir")).toAbsolutePath().normalize();
+		if(!oWorkingDirectory.toFile().isDirectory()) {
+			Utils.debugLog("WasdiStats.writeProcessWorkspaceStats: current working directory is not a directory. Wait, what?! :-O");
+			return;
+		}
+		try {
+			m_iNextFreeRow = 1;
+			Files.list(oWorkingDirectory).forEach(oPath -> loadProcessWorkspaceCsv(oPath));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 
-	private void writeUsersStats(String sSheetId) {
+	private void loadProcessWorkspaceCsv(Path oPath) {
+		try (BufferedReader oBufferedReader = new BufferedReader(new FileReader(oPath.toString()))) {
+			String sLine;
+			boolean bHeaderSkipped = false;
+			while ((sLine = oBufferedReader.readLine()) != null) {
+				//skip empty lines
+				if(Utils.isNullOrEmpty(sLine) || !sLine.contains(s_sCOMMA_DELIMITER) ) {
+					continue;
+				}
+				//skip first line too
+				if(!bHeaderSkipped) {
+					bHeaderSkipped = true;
+					continue;
+				}
+				
+				String[] asValues = sLine.split(s_sCOMMA_DELIMITER);
+				if(asValues==null || asValues.length <= 0) {
+					continue;
+				}
+				//instantiate ProcessWorkspace
+				ProcessWorkspace oProcessWorkspace = new ProcessWorkspace();
+
+				/*
+				"productName,workspaceId,userId,operationType,"
+				"operationSubType,operationDate,operationStartDate,operationEndDate,"
+				"lastStateChangeDate,processObjId,fileSize,status,"
+				"progressPerc,pid,payload,nodeCode,"
+				"parentId,subprocessPid"
+				*/
+				oProcessWorkspace.setProductName(asValues[0]);
+				oProcessWorkspace.setWorkspaceId(asValues[1]);
+				oProcessWorkspace.setUserId(asValues[2]);
+				oProcessWorkspace.setOperationType(asValues[3]);
+				oProcessWorkspace.setOperationSubType(asValues[4]);
+				oProcessWorkspace.setOperationDate(asValues[5]);
+				oProcessWorkspace.setOperationStartDate(asValues[6]);
+				oProcessWorkspace.setOperationEndDate(asValues[7]);
+				oProcessWorkspace.setLastStateChangeDate(asValues[8]);
+				oProcessWorkspace.setProcessObjId(asValues[9]);
+				oProcessWorkspace.setFileSize(asValues[10]);
+				oProcessWorkspace.setStatus(asValues[11]);
+				oProcessWorkspace.setProgressPerc(Integer.parseInt(asValues[12]));
+				oProcessWorkspace.setPid(Integer.parseInt(asValues[13]));
+				oProcessWorkspace.setPayload(asValues[14]);
+				oProcessWorkspace.setParentId(asValues[15]);
+				oProcessWorkspace.setSubprocessPid(Integer.parseInt(asValues[16]));
+
+				
+				
+			}
+		}catch (Exception oE) {
+			Utils.debugLog("WasdiStats.loadProcessWorkspaceCsvDump( " + oPath.toString() +  " ): failed reading file: " + oE);
+		}
+	}
+
+
+	private void loadUsers() {
+		m_aoAllUsers = new HashMap<>();
+		UserRepository oUserRepository = new UserRepository();
+		List<User> aoUserList = oUserRepository.getAllUsers();
+		for (User oUser : aoUserList) {
+			if(null!=oUser && !Utils.isNullOrEmpty(oUser.getUserId())) {
+				m_aoAllUsers.put(oUser.getUserId(), oUser);
+			}
+		}
+	}
+
+
+	private void writeProcessWorkspaceStats() {
+		Path oWorkingDirectory = Paths.get(System.getProperty("user.dir")).toAbsolutePath().normalize();
+		if(!oWorkingDirectory.toFile().isDirectory()) {
+			Utils.debugLog("WasdiStats.writeProcessWorkspaceStats: current working directory is not a directory. Wait, what?! :-O");
+			return;
+		}
+		try {
+			m_iNextFreeRow = 1;
+			Files.list(oWorkingDirectory).forEach(oPath -> readCsv(oPath));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	private void readCsv(Path oPath){
+		try {
+			//exclude irrelevant entries
+			if(oPath.toFile().isDirectory() || !oPath.toString().toLowerCase().endsWith(".csv")) {
+				return;
+			}
+			Utils.debugLog("WasdiStats.readCsv: processing file " + oPath.getFileName());
+
+			//read and upload as soon as possible
+			List<List<Object>> aoCsvContent = new LinkedList<>();
+			try (BufferedReader oBufferedReader = new BufferedReader(new FileReader(oPath.toString()))) {
+				String sLine;
+				int iCurrentLine = 0;
+				boolean bHeaderSkipped = false;
+				long lCumulativeSize = 0l;
+				while ((sLine = oBufferedReader.readLine()) != null) {
+					//skip empty lines
+					if(Utils.isNullOrEmpty(sLine) || !sLine.contains(s_sCOMMA_DELIMITER) ) {
+						continue;
+					}
+					//skip first line too
+					if(!bHeaderSkipped) {
+						bHeaderSkipped = true;
+						continue;
+					}
+					
+					long lCurLineSize = (long)(sLine.toCharArray().length * Character.BYTES); 
+					if(lCurLineSize + lCumulativeSize > s_lMAX_BYTES) {
+						//stop here, adding more would violate limit
+						//upload block of lines read so far
+						
+						Utils.debugLog("WasdiStats.readCsv: uploading " + aoCsvContent.size() + " lines, size: " + lCumulativeSize + ", rows so far: " + iCurrentLine);
+						ValueRange oBody = new ValueRange().setValues(aoCsvContent);
+						UpdateValuesResponse oResult = s_oSheetsService.spreadsheets().values()
+								.update(s_sSheetId, "'ProcessWorkspace'!A"+m_iNextFreeRow, oBody)
+								.setValueInputOption("RAW").execute();
+						Utils.debugLog("WasdiStats.readCsv: updated " + oResult.getUpdatedCells() + " cells");
+						m_iNextFreeRow += iCurrentLine;
+						//reset structure and size counter
+						aoCsvContent.clear();
+						lCumulativeSize = 0l;
+					} 
+					
+					//buffer not full yet, keep adding
+					lCumulativeSize += lCurLineSize;
+					Object[] aoValues = sLine.split(s_sCOMMA_DELIMITER);
+					aoCsvContent.add(Arrays.asList(aoValues));
+					iCurrentLine++;
+				}
+			}catch (Exception oE) {
+				Utils.debugLog("WasdiStats.loadProcessWorkspaceCsvDump( " + oPath.toString() +  " ): failed reading file: " + oE);
+			}
+			//skip the first line (it's just the header)
+			try {
+				aoCsvContent = aoCsvContent.subList(1, aoCsvContent.size());
+			} catch (Exception oE) {
+				Utils.debugLog("WasdiStats.loadProcessWorkspaceCsvDump( " + oPath.toString() +  " ): could not remove first line: " + oE);
+			}
+		} catch (Exception oE) {
+			Utils.debugLog("WasdiStats.loadProcessWorkspaceCsvDump( " + oPath.toString() +  " ): " + oE);
+		}
+	}
+
+
+	private void writeUsersStats() {
 		String sUsersGid = null;
 		try {
 			sUsersGid = ConfigReader.getPropValue(s_sUSERS_GID);
@@ -102,7 +275,7 @@ public class WasdiStats {
 							)
 					);
 			UpdateValuesResponse oResult = s_oSheetsService.spreadsheets().values()
-					.update(sSheetId, "'Users'!A" + iRow, oBody)
+					.update(s_sSheetId, "'Users'!A" + iRow, oBody)
 					.setValueInputOption("RAW").execute();
 			++iRow;
 
@@ -115,9 +288,9 @@ public class WasdiStats {
 									)
 							)
 					);
-			
+
 			oResult = s_oSheetsService.spreadsheets().values()
-					.update(sSheetId, "'Users'!A" + iRow, oBody)
+					.update(s_sSheetId, "'Users'!A" + iRow, oBody)
 					.setValueInputOption("RAW").execute();
 			++iRow;
 
@@ -168,7 +341,7 @@ public class WasdiStats {
 					.setValueInputOption("USER_ENTERED")
 					.setData(oData);
 			BatchUpdateValuesResponse oBatchResult = s_oSheetsService.spreadsheets().values()
-					.batchUpdate(sSheetId, oBatchBody).execute();
+					.batchUpdate(s_sSheetId, oBatchBody).execute();
 
 			/*
 			oBody = new ValueRange().setValues( Arrays.asList(aoObjects));
