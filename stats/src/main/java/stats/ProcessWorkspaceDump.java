@@ -4,10 +4,8 @@
 package stats;
 
 import java.io.BufferedWriter;
-import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.util.List;
 
 import wasdi.shared.business.ProcessWorkspace;
@@ -74,13 +72,12 @@ public class ProcessWorkspaceDump {
 			System.out.println("ProcessWorkspaceDump.dumpProcessWorkspace: FileWriter could be created :-)");
 			try (BufferedWriter oBufferedWriter = new BufferedWriter(oWriter)) {
 				System.out.println("ProcessWorkspaceDump.dumpProcessWorkspace: BufferedWriter could be created :-)");
-				oBufferedWriter.newLine();
-				System.out.println("ProcessWorkspaceDump.dumpProcessWorkspace: it is possible towrite to file :-)");
 				oBufferedWriter.write("productName,workspaceId,userId,operationType,"
 						+ "operationSubType,operationDate,operationStartDate,operationEndDate,"
 						+ "lastStateChangeDate,processObjId,fileSize,status,"
-						+ "progressPerc,pid,payload,nodeCode,"
-						+ "parentId,subprocessPid");
+//						+ "progressPerc,pid,payload,nodeCode,"
+						+ "progressPerc,pid,nodeCode,"
+						+ "parentId,subprocessPid\n");
 				System.out.println("ProcessWorkspaceDump.dumpProcessWorkspace: header could be written :-)");
 				int iDone = 0;
 				for (ProcessWorkspace oProcessWorkspace : aoProcesses) {
@@ -99,7 +96,7 @@ public class ProcessWorkspaceDump {
 						oBufferedWriter.write(oProcessWorkspace.getStatus() + ",");
 						oBufferedWriter.write(oProcessWorkspace.getProgressPerc() + ",");
 						oBufferedWriter.write(oProcessWorkspace.getPid() + ",");
-						oBufferedWriter.write(oProcessWorkspace.getPayload() + ",");
+						//oBufferedWriter.write(oProcessWorkspace.getPayload() + ",");
 						oBufferedWriter.write(oProcessWorkspace.getNodeCode() + ",");
 						oBufferedWriter.write(oProcessWorkspace.getParentId() + ",");
 						oBufferedWriter.write(oProcessWorkspace.getSubprocessPid() + ",");
