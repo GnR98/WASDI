@@ -77,7 +77,7 @@ public class ProcessWorkspaceDump {
 						+ "lastStateChangeDate,processObjId,fileSize,status,"
 //						+ "progressPerc,pid,payload,nodeCode,"
 						+ "progressPerc,pid,nodeCode,"
-						+ "parentId,subprocessPid\n");
+						+ "parentId,subprocessPid,duration\n");
 				System.out.println("ProcessWorkspaceDump.dumpProcessWorkspace: header could be written :-)");
 				int iDone = 0;
 				for (ProcessWorkspace oProcessWorkspace : aoProcesses) {
@@ -101,6 +101,9 @@ public class ProcessWorkspaceDump {
 						oBufferedWriter.write(oProcessWorkspace.getParentId() + ",");
 						oBufferedWriter.write(oProcessWorkspace.getSubprocessPid() + ",");
 
+						long lDuration = 0l;
+						lDuration = WasdiStats.calcProcessDuration(oProcessWorkspace);
+						oBufferedWriter.write(""+lDuration);
 						oBufferedWriter.write("\n");
 						++iDone;
 					} catch (Exception oE) {
