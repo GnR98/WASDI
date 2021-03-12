@@ -24,6 +24,7 @@ import it.fadeout.Wasdi;
 import it.fadeout.mercurius.business.Message;
 import it.fadeout.mercurius.client.MercuriusAPI;
 import wasdi.shared.business.DownloadedFile;
+import wasdi.shared.business.Node;
 import wasdi.shared.business.ProcessWorkspace;
 import wasdi.shared.business.ProductWorkspace;
 import wasdi.shared.business.PublishedBand;
@@ -31,6 +32,7 @@ import wasdi.shared.business.User;
 import wasdi.shared.business.Workspace;
 import wasdi.shared.business.WorkspaceSharing;
 import wasdi.shared.data.DownloadedFilesRepository;
+import wasdi.shared.data.NodeRepository;
 import wasdi.shared.data.ProcessWorkspaceRepository;
 import wasdi.shared.data.ProcessorLogRepository;
 import wasdi.shared.data.ProductWorkspaceRepository;
@@ -131,6 +133,8 @@ public class WorkspaceResource {
 			// Create repo
 			WorkspaceRepository oWSRepository = new WorkspaceRepository();
 			WorkspaceSharingRepository oWorkspaceSharingRepository = new WorkspaceSharingRepository();
+			// Create node repo
+			NodeRepository oNodeRepository = new NodeRepository();
 
 			// Get Workspace List
 			List<Workspace> aoWorkspaces = oWSRepository.getWorkspaceByUser(oUser.getUserId());
@@ -158,6 +162,17 @@ public class WorkspaceResource {
 
 						oWSViewModel.getSharedUsers().add(aoSharings.get(iSharings).getUserId());
 					}
+				}
+				// Add to the view model the state af activity of the node
+				// "wasdi" isn't in the node list -> 
+				// case1 the node is "wasdi" -> active true
+				// case 2 the node isn't "wasdi" -> active <-> node.isactive
+				if (oWorkspace.getNodeCode().equals("wasdi")) {
+					oWSViewModel.setNodeActive(true);	
+				}
+				else {
+					Node oCurNode = oNodeRepository.getNodeByCode(oWorkspace.getNodeCode());
+					oWSViewModel.setNodeActive(oCurNode.getActive());
 				}
 
 				aoWSList.add(oWSViewModel);
@@ -200,6 +215,17 @@ public class WorkspaceResource {
 
 							oWSViewModel.getSharedUsers().add(aoSharings.get(iSharings).getUserId());
 						}
+					}
+					// Add to the view model the state af activity of the node
+					// "wasdi" isn't in the node list -> 
+					// case1 the node is "wasdi" -> active true
+					// case 2 the node isn't "wasdi" -> active <-> node.isactive
+					if (oWorkspace.getNodeCode().equals("wasdi")) {
+						oWSViewModel.setNodeActive(true);	
+					}
+					else {
+						Node oCurNode = oNodeRepository.getNodeByCode(oWorkspace.getNodeCode());
+						oWSViewModel.setNodeActive(oCurNode.getActive());
 					}
 
 					aoWSList.add(oWSViewModel);

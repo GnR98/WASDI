@@ -11,8 +11,18 @@ public class WorkspaceListInfoViewModel {
     private String workspaceName;
     private String ownerUserId;
     private List<String> sharedUsers = new ArrayList<>();
+    // 	reports if the node on which the workspace is hosted is active
+    private boolean isNodeActive; 
 
-    public String getWorkspaceId() {
+    public boolean isNodeActive() {
+		return isNodeActive;
+	}
+
+	public void setNodeActive(boolean isNodeActive) {
+		this.isNodeActive = isNodeActive;
+	}
+
+	public String getWorkspaceId() {
         return workspaceId;
     }
 
