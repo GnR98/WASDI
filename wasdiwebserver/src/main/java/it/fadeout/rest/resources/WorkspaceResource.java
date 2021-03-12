@@ -18,6 +18,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
+import org.apache.abdera.protocol.server.WorkspaceInfo;
 import org.apache.commons.io.FileUtils;
 
 import it.fadeout.Wasdi;
@@ -334,7 +335,7 @@ public class WorkspaceResource {
 	@GET
 	@Path("create")
 	@Produces({ "application/xml", "application/json", "text/xml" })
-	public PrimitiveResult createWorkspace(@HeaderParam("x-session-token") String sSessionId,
+	public WorkspaceListInfoViewModel createWorkspace(@HeaderParam("x-session-token") String sSessionId,
 			@QueryParam("name") String sName, @QueryParam("node") String sNodeCode) {
 
 		Utils.debugLog(
@@ -388,8 +389,9 @@ public class WorkspaceResource {
 		WorkspaceRepository oWorkspaceRepository = new WorkspaceRepository();
 		if (oWorkspaceRepository.insertWorkspace(oWorkspace)) {
 
-			PrimitiveResult oResult = new PrimitiveResult();
-			oResult.setStringValue(oWorkspace.getWorkspaceId());
+			WorkspaceListInfoViewModel oResult = new WorkspaceListInfoViewModel();
+			oResult.setNodeActive(true);
+			oResult.setWorkspaceId(oWorkspace.getWorkspaceId());
 
 			return oResult;
 		} else {

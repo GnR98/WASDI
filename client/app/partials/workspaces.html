@@ -47,7 +47,8 @@
                     <tr ng-repeat="oWSListItem in m_oController.getWorkspaceInfoList() | filter:searchWorkSpace"
                         class="workspaces-list-item"
                         ng-class="{'selected-row':m_oController.isSelectedRowInWorkspaceTable(oWSListItem),'node-inactive-row':m_oController.isActiveRowInWorkspaceTable(oWSListItem)}">
-                        <td ng-click="m_oController.loadProductList(oWSListItem)">
+                        <td ng-click="m_oController.loadProductList(oWSListItem)"
+                        disabled="true">
                             {{$index + 1}}
                         </td>
                         <td ng-click="m_oController.loadProductList(oWSListItem)">
@@ -63,7 +64,7 @@
 
                         <td class="over-color" data-toggle="tooltip" data-placement="top"
                             title="{{'WORKSPACES_TOOLTIP_EDIT'|translate}}"
-                            ng-click="m_oController.openWorkspace(oWSListItem.workspaceId)">
+                            ng-click="m_oController.openWorkspace(oWSListItem)">
                             <div>
                                 <!--OLD VERSION COMMENTED-->
                                 <i>
@@ -76,7 +77,7 @@
                         <!--OLD VERSION COMMENTED-->
                         <td class="over-color" data-toggle="tooltip" data-placement="top"
                             title="{{'WORKSPACES_TOOLTIP_DELETE'|translate}}"
-                            ng-click="m_oController.DeleteWorkspace(oWSListItem.workspaceId)">
+                            ng-click="m_oController.DeleteWorkspace(oWSListItem)">
                             <i class="fa fa-trash fa-lg" aria-hidden="true"></i>
                         </td>
                     </tr>

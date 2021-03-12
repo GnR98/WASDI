@@ -99,8 +99,8 @@ var WorkspaceController = (function () {
         this.m_oWorkspaceService.createWorkspace().success(function (data, status) {
             if (data != null) {
                 if (data != undefined) {
-                    var sWorkspaceId = data.stringValue;
-                    oController.openWorkspace(sWorkspaceId);
+                    //var sWorkspaceId = data.workspaceId;
+                    oController.openWorkspace(data);
 
                 }
             }
@@ -111,7 +111,15 @@ var WorkspaceController = (function () {
     };
 
 
-    WorkspaceController.prototype.openWorkspace = function (sWorkspaceId) {
+    WorkspaceController.prototype.openWorkspace = function (oWorkspace) {
+        // node isn't active
+        if (!oWorkspace.nodeActive) {
+            var dialog = utilsVexDialogAlertBottomRightCorner("WORKSPACE "+ oWorkspace.workspaceName +" IS HOSTED ON AN INACTIVE COMPUTATIONAL NODE.<br> PLEASE, TRY AGAIN LATER");
+            utilsVexCloseDialogAfter(5000, dialog);
+            return;
+        } // add alert !
+
+        var sWorkspaceId = oWorkspace.workspaceId;
         // Stop loading new workspaces.. we are leaving!
         this.m_bOpeningWorkspace = true;
         var oController = this;
@@ -189,6 +197,8 @@ var WorkspaceController = (function () {
     WorkspaceController.prototype.loadProductList = function (oWorkspace) {
         // View is leaving...
         if (this.m_bOpeningWorkspace) return;
+        // node isn't active
+        if (!oWorkspace.nodeActive) return; // add alert !
 
         this.m_bLoadingWSFiles = true;
         //this.m_oWorkspaceSelected = null;
@@ -434,8 +444,14 @@ var WorkspaceController = (function () {
      * @param sWorkspaceId
      * @constructor
      */
-    WorkspaceController.prototype.DeleteWorkspace = function (sWorkspaceId) {
-
+    WorkspaceController.prototype.DeleteWorkspace = function (oWorkspace) {
+        // node isn't active
+        if (!oWorkspace.nodeActive){
+            var dialog = utilsVexDialogAlertBottomRightCorner("WORKSPACE "+ oWorkspace.workspaceName +" IS HOSTED ON AN INACTIVE COMPUTATIONAL NODE.<br> PLEASE, TRY AGAIN LATER");
+            utilsVexCloseDialogAfter(5000, dialog);
+            return; // add alert !
+        }
+        var sWorkspaceId = oWorkspace.workspaceId;
         var oController = this;
 
         utilsVexDialogConfirm("DELETING WORKSPACE<br>ARE YOU SURE?", function (value) {
