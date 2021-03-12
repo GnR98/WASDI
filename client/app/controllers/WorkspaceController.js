@@ -425,6 +425,10 @@ var WorkspaceController = (function () {
 
         return true;
     };
+
+    WorkspaceController.prototype.isActiveRowInWorkspaceTable = function (oWorkspace) {
+        return !oWorkspace.nodeActive;
+    };
     /**
      *
      * @param sWorkspaceId

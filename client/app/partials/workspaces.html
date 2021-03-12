@@ -46,7 +46,7 @@
                     </thead>
                     <tr ng-repeat="oWSListItem in m_oController.getWorkspaceInfoList() | filter:searchWorkSpace"
                         class="workspaces-list-item"
-                        ng-class="{'selected-row':m_oController.isSelectedRowInWorkspaceTable(oWSListItem)}">
+                        ng-class="{'selected-row':m_oController.isSelectedRowInWorkspaceTable(oWSListItem),'node-inactive-row':m_oController.isActiveRowInWorkspaceTable(oWSListItem)}">
                         <td ng-click="m_oController.loadProductList(oWSListItem)">
                             {{$index + 1}}
                         </td>
