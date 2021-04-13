@@ -299,3 +299,4 @@ var WappsController = (function() {
     ];
     return WappsController;
 })();
+window.WappsController =  WappsController;
