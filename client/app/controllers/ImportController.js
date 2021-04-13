@@ -2499,3 +2499,4 @@ var ImportController = (function() {
 
     return ImportController;
 }) ();
+window.ImportController = ImportController;
