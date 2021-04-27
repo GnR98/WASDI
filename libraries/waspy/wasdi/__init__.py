@@ -2715,9 +2715,9 @@ def copyFileToSftp(sFileName, bAsynch=None):
 
     sResult = ''
     try:
-        if getUploadActive() is True:
+        if getUploadActive():
             sFilePath = os.path.join(getSavePath(), sFileName)
-            if fileExistsOnWasdi(sFilePath) is False:
+            if not fileExistsOnWasdi(sFileName):
                 _log('[INFO] waspy.copyFileToSftp: remote file is missing, uploading')
                 try:
                     _uploadFile(sFileName)
