@@ -121,6 +121,7 @@ public class Wasdi extends ResourceConfig {
 	}
 
 	public Wasdi() {
+		Utils.debugLog("Wasdi constructor called");
 		register(new WasdiBinder());
 		packages(true, "it.fadeout.rest.resources");
 	}
