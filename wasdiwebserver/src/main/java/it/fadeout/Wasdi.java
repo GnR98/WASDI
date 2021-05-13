@@ -124,6 +124,42 @@ public class Wasdi extends ResourceConfig {
 		Utils.debugLog("Wasdi constructor called");
 		register(new WasdiBinder());
 		packages(true, "it.fadeout.rest.resources");
+		
+		setHttpTimeout();
+		Utils.debugLog("Wasdi constructor done");
+	}
+
+	/** 
+	 * Sets timeouts for connection and read on a HTTP connection
+	 */
+	private void setHttpTimeout() {
+		//set a default timeout of 10 minutes
+		int iTimeout = 10 * 1000 * 60;
+		String sTimeout = "" + iTimeout;
+		
+		//try to read parameter
+		try {
+			sTimeout = getInitParameter("httpTimeout", sTimeout);
+		} catch (Exception oE) {
+			Utils.debugLog("Wasdi.Wasdi: could not read httpTimeout value due to: " + oE + ", defaulting");
+		}
+		
+		//try to parse parameter
+		try {
+			iTimeout = Integer.parseInt(sTimeout);
+		} catch (Exception oE) {
+			Utils.debugLog("Wasdi.Wasdi: could not parse timeout: " + sTimeout + " due to " + oE + ", defaulting to " + iTimeout);
+		}
+		
+		//set the timeout
+		try {
+			//set connection timeout
+			System.setProperty("sun.net.client.defaultConnectTimeout", ""+iTimeout);
+			//set read timeout
+			System.setProperty("sun.net.client.defaultReadTimeout", ""+iTimeout);
+		} catch (Exception oE) {
+			Utils.debugLog("Wasdi.Wasdi: could not set default timeout for HTTP connections due to " + oE + ". Starting wasdi without it");
+		}
 	}
 
 	@PostConstruct
