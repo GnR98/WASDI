@@ -87,6 +87,7 @@ m_sMyProcId = ''
 m_sBaseUrl = 'https://www.wasdi.net/wasdiwebserver/rest'
 m_bIsOnServer = False
 
+m_iTimeout = 120
 
 def printStatus():
     """Prints status
@@ -445,6 +446,30 @@ def refreshParameters():
     """
     _loadParams()
 
+def getTimeout():
+    """
+    :return: the timeout for HTTP requests
+    """
+    global m_iTimeout
+    return m_iTimeout
+
+def setTimeout(fTimeout):
+    """
+    :param fTimeout: the timeout to be set for HTTP requests
+    """
+    global m_iTimeout
+    m_iTimeout = fTimeout
+
+
+def request_patch(slf, *args, **kwargs):
+    """
+    requests timeout patch, as inspired by:
+    https://stackoverflow.com/a/49550201/2295107
+    """
+    global m_iTimeout
+    iTimeout = kwargs.pop('timeout', m_iTimeout)
+    return slf.request_orig(*args, **kwargs, timeout=iTimeout)
+
 
 def init(sConfigFilePath=None):
     """
@@ -452,6 +477,7 @@ def init(sConfigFilePath=None):
     :param sConfigFilePath: local path of the config file. In None or the file does not exists, WASDI will ask for login in the console
     :return: True if login was successful, False otherwise
     """
+
     global m_sUser
     global m_sPassword
     global m_sBaseUrl
@@ -490,6 +516,11 @@ def init(sConfigFilePath=None):
         print('[ERROR] waspy.init: must initialize user first, but None given' +
               '  ******************************************************************************')
         return False
+
+    # patch requests so that a default timeout is adopted
+    # courtesy of https://stackoverflow.com/a/49550201/2295107
+    setattr(requests.sessions.Session, 'request_orig', requests.sessions.Session.request)
+    requests.sessions.Session.request = request_patch
 
     if m_sBasePath is None:
         if m_bIsOnServer is True:
@@ -2866,6 +2897,8 @@ def _loadConfig(sConfigFilePath):
     global m_bUploadActive
     global m_bVerbose
 
+    global m_iTimeout
+
     try:
         # assume it is a JSON file
         sTempWorkspaceName = None
@@ -2895,6 +2928,8 @@ def _loadConfig(sConfigFilePath):
                 m_bVerbose = bool(oJson["VERBOSE"])
             if 'BASEURL' in oJson:
                 setBaseUrl(oJson['BASEURL'])
+            if 'TIMEOUT' in oJson:
+                setTimeout(oJson['TIMEOUT'])
 
         return True, sTempWorkspaceName, sTempWorkspaceID
 
