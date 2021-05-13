@@ -1,5 +1,13 @@
 # \_\_/== Changelog ==\\\_\_
 
+## [0.6.3] - 2021-05-12
+
+### Added
+
+- timeout for HTTP requests: a default timeout is adopted globally, 
+  however it can be overridden by config. Each call can anyway use 
+  its independent timeout
+
 ## [0.6.2] - 2021-03-10
 
 ### Changed
