@@ -169,6 +169,39 @@ public class LauncherMain implements ProcessWorkspaceUpdateSubscriber {
 	 */
 	private String m_sTomcatUser = "tomcat8";
 
+	/** 
+	 * Sets timeouts for connection and read on a HTTP connection
+	 */
+	private static void setHttpTimeout() {
+		//set a default timeout of 10 minutes
+		long lTimeout = 10 * 1000 * 60l;
+		String sTimeout = Long.toString(lTimeout);
+		
+		//try to read parameter
+		try {
+			sTimeout = ConfigReader.getPropValue("httpTimeout", sTimeout);
+		} catch (Exception oE) {
+			Utils.debugLog("Wasdi.Wasdi: could not read httpTimeout value due to: " + oE + ", defaulting");
+		}
+		
+		//try to parse parameter
+		try {
+			lTimeout = Long.parseLong(sTimeout);
+		} catch (Exception oE) {
+			Utils.debugLog("Wasdi.Wasdi: could not parse timeout: " + sTimeout + " due to " + oE + ", defaulting to " + lTimeout);
+		}
+		
+		//set the timeout
+		try {
+			//set connection timeout
+			System.setProperty("sun.net.client.defaultConnectTimeout", Long.toString(lTimeout));
+			//set read timeout
+			System.setProperty("sun.net.client.defaultReadTimeout", Long.toString(lTimeout));
+		} catch (Exception oE) {
+			Utils.debugLog("Wasdi.Wasdi: could not set default timeout for HTTP connections due to " + oE + ". Starting wasdi without it");
+		}
+	}
+	
 	/**
 	 * WASDI Launcher Main Entry Point
 	 * 
@@ -189,6 +222,8 @@ public class LauncherMain implements ProcessWorkspaceUpdateSubscriber {
 			// no log4j configuration
 			System.err.println("Launcher Main - Error loading log configuration.  Reason: " + org.apache.commons.lang.exception.ExceptionUtils.getStackTrace(exp));
 		}
+		
+		setHttpTimeout();
 
 		s_oLogger.debug("WASDI Launcher Main Start");
 
