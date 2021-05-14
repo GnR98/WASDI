@@ -125,7 +125,6 @@ public class Wasdi extends ResourceConfig {
 		register(new WasdiBinder());
 		packages(true, "it.fadeout.rest.resources");
 		
-		setHttpTimeout();
 		Utils.debugLog("Wasdi constructor done");
 	}
 
@@ -134,8 +133,8 @@ public class Wasdi extends ResourceConfig {
 	 */
 	private void setHttpTimeout() {
 		//set a default timeout of 10 minutes
-		int iTimeout = 10 * 1000 * 60;
-		String sTimeout = "" + iTimeout;
+		long lTimeout = 10 * 1000 * 60l;
+		String sTimeout = Long.toString(lTimeout);
 		
 		//try to read parameter
 		try {
@@ -146,17 +145,17 @@ public class Wasdi extends ResourceConfig {
 		
 		//try to parse parameter
 		try {
-			iTimeout = Integer.parseInt(sTimeout);
+			lTimeout = Long.parseLong(sTimeout);
 		} catch (Exception oE) {
-			Utils.debugLog("Wasdi.Wasdi: could not parse timeout: " + sTimeout + " due to " + oE + ", defaulting to " + iTimeout);
+			Utils.debugLog("Wasdi.Wasdi: could not parse timeout: " + sTimeout + " due to " + oE + ", defaulting to " + lTimeout);
 		}
 		
 		//set the timeout
 		try {
 			//set connection timeout
-			System.setProperty("sun.net.client.defaultConnectTimeout", ""+iTimeout);
+			System.setProperty("sun.net.client.defaultConnectTimeout", Long.toString(lTimeout));
 			//set read timeout
-			System.setProperty("sun.net.client.defaultReadTimeout", ""+iTimeout);
+			System.setProperty("sun.net.client.defaultReadTimeout", Long.toString(lTimeout));
 		} catch (Exception oE) {
 			Utils.debugLog("Wasdi.Wasdi: could not set default timeout for HTTP connections due to " + oE + ". Starting wasdi without it");
 		}
@@ -167,6 +166,9 @@ public class Wasdi extends ResourceConfig {
 
 		Utils.debugLog("----------- Welcome to WASDI - Web Advanced Space Developer Interface");
 
+		//set HTTP timeouts
+		setHttpTimeout();
+		
 		try {
 			Utils.s_iSessionValidityMinutes = Integer.parseInt(getInitParameter("SessionValidityMinutes", "" + Utils.s_iSessionValidityMinutes));
 			Utils.debugLog("-------Session Validity [minutes]: " + Utils.s_iSessionValidityMinutes);
