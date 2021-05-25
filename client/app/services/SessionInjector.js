@@ -2,8 +2,9 @@
  * Created by p.campanella on 22/08/2014.
  */
 
-angular.module('wasdi.sessionInjector', ['wasdi.ConstantsService']).factory('sessionInjector', ['ConstantsService', function (oConstantsService) {
+angular.module('wasdi.sessionInjector', ['wasdi.ConstantsService']).factory('sessionInjector', ['ConstantsService','$state', function (oConstantsService,oState) {
     this.m_oConstantservice = oConstantsService;
+    this.m_oState = oState;
     //this.m_oHttp = $http;
     var oController = this;
     var sessionInjector = {
@@ -56,7 +57,7 @@ angular.module('wasdi.sessionInjector', ['wasdi.ConstantsService']).factory('ses
                 var oRequest = new XMLHttpRequest();
 
                 var oConstantServiceReference = oController.m_oConstantservice;
-
+                var oThisService = this;
                 oRequest.onload = function () {
                     var iStatus = oRequest.status; // HTTP response status, e.g., 200 for "200 OK"
                     var oData = JSON.parse(oRequest.responseText); // Returned data, e.g., an HTML document.
@@ -67,13 +68,18 @@ angular.module('wasdi.sessionInjector', ['wasdi.ConstantsService']).factory('ses
                         oConstantServiceReference.getUser().sessionId = oData['access_token'];
                         oConstantServiceReference.getUser().refreshToken = oData['refresh_token'];
                     } else {
-                        console.log('SessionInjector: token refresh failed :(')
+                        console.log('SessionInjector: token refresh failed :(');
+                        oKeycloak.logout();
+                        oThisService.m_oState.go("home");
                     }
                 };
 
-                oRequest.open("POST", oController.m_oConstantservice.getAUTHURL() + '/protocol/openid-connect/token', bAsync);
-                oRequest.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-                oRequest.send(sParams);
+                if (oKeycloak.authenticated && oKeycloak.isTokenExpired()) { // if authenticated && access token invalid
+                    oRequest.open("POST", oController.m_oConstantservice.getAUTHURL() + '/protocol/openid-connect/token', bAsync);
+                    oRequest.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+                    oRequest.send(sParams);
+                }
+
 
                 // oController.m_oHttp.post(
                 //     oController.m_oConstantservice.getAUTHURL() + '/protocol/openid-connect/token',
