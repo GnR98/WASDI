@@ -6,12 +6,16 @@ angular.module('wasdi.sessionInjector', ['wasdi.ConstantsService']).factory('ses
     this.m_oConstantservice = oConstantsService;
     this.m_oState = oState;
     //this.m_oHttp = $http;
-    var oController = this;
+    var m_oController = this;
+    // support variable used to avoid multiple messages on session expiration
+    var m_bExiting = true;  
+
+    
     var sessionInjector = {
         request: function (config) {
-            if (utilsIsSubstring(config.url, oController.m_oConstantservice.getWmsUrlGeoserver()) == true) {//config.url == 'http://178.22.66.96:8080/geoserver/ows?service=WMS&request=GetCapabilities'
+            if (utilsIsSubstring(config.url, m_oController.m_oConstantservice.getWmsUrlGeoserver()) == true) {//config.url == 'http://178.22.66.96:8080/geoserver/ows?service=WMS&request=GetCapabilities'
                 return config;
-            } else if (config.url.includes(oController.m_oConstantservice.getAUTHURL())) {
+            } else if (config.url.includes(m_oController.m_oConstantservice.getAUTHURL())) {
                 return config;
             }
 
@@ -56,9 +60,10 @@ angular.module('wasdi.sessionInjector', ['wasdi.ConstantsService']).factory('ses
                 var bAsync = false;
                 var oRequest = new XMLHttpRequest();
 
-                var oConstantServiceReference = oController.m_oConstantservice;
-                var oThisService = this;
+                var oConstantServiceReference = m_oController.m_oConstantservice;
+                
                 oRequest.onload = function () {
+                    var oThisService = this;
                     var iStatus = oRequest.status; // HTTP response status, e.g., 200 for "200 OK"
                     var oData = JSON.parse(oRequest.responseText); // Returned data, e.g., an HTML document.
 
@@ -69,16 +74,27 @@ angular.module('wasdi.sessionInjector', ['wasdi.ConstantsService']).factory('ses
                         oConstantServiceReference.getUser().refreshToken = oData['refresh_token'];
                     } else {
                         console.log('SessionInjector: token refresh failed :(');
-                        oKeycloak.logout();
-                        oThisService.m_oState.go("home");
+                        //oKeycloak.logout();
+                        //console.log("not authenticated -> go home ");
+                        m_oController.m_oState.go("home");
+                        if(m_bExiting){
+                            utilsVexDialogAlertTop("GURU MEDITATION<br>USER SESSION EXPIRED");
+                            m_bExiting = false;
+                        }
                     }
                 };
-
-                if (oKeycloak.authenticated && oKeycloak.isTokenExpired()) { // if authenticated && access token invalid
-                    oRequest.open("POST", oController.m_oConstantservice.getAUTHURL() + '/protocol/openid-connect/token', bAsync);
+                // first, check if the token is expired and try to update it
+                if (oKeycloak.isTokenExpired())  { // if authenticated || access token invalid
+                    // Try to obtain a new token 
+                    oRequest.open("POST", m_oController.m_oConstantservice.getAUTHURL() + '/protocol/openid-connect/token', bAsync);
                     oRequest.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
                     oRequest.send(sParams);
                 }
+                // then check also if the user is not authenticated
+                if (!oKeycloak.authenticated){
+                    console.log("not authenticated -> go home ");
+                    m_oController.m_oState.go("home");
+                   }
 
 
                 // oController.m_oHttp.post(
