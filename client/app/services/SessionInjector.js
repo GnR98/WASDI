@@ -8,9 +8,9 @@ angular.module('wasdi.sessionInjector', ['wasdi.ConstantsService']).factory('ses
     //this.m_oHttp = $http;
     var m_oController = this;
     // support variable used to avoid multiple messages on session expiration
-    var m_bExiting = true;  
+    var m_bExiting = true;
 
-    
+
     var sessionInjector = {
         request: function (config) {
             if (utilsIsSubstring(config.url, m_oController.m_oConstantservice.getWmsUrlGeoserver()) == true) {//config.url == 'http://178.22.66.96:8080/geoserver/ows?service=WMS&request=GetCapabilities'
@@ -24,6 +24,10 @@ angular.module('wasdi.sessionInjector', ['wasdi.ConstantsService']).factory('ses
             config.headers['x-session-token'] = sSessionId;
 
             var asDecodedToken = null;
+
+/*            if (utilsIsStrNullOrEmpty(sSessionId)){
+                m_oController.m_oState.go("home");
+            }*/
 
             try {
                 asDecodedToken =jwt_decode(oConstantsService.getSessionId());
@@ -61,7 +65,7 @@ angular.module('wasdi.sessionInjector', ['wasdi.ConstantsService']).factory('ses
                 var oRequest = new XMLHttpRequest();
 
                 var oConstantServiceReference = m_oController.m_oConstantservice;
-                
+
                 oRequest.onload = function () {
                     var oThisService = this;
                     var iStatus = oRequest.status; // HTTP response status, e.g., 200 for "200 OK"
@@ -85,7 +89,7 @@ angular.module('wasdi.sessionInjector', ['wasdi.ConstantsService']).factory('ses
                 };
                 // first, check if the token is expired and try to update it
                 if (oKeycloak.isTokenExpired())  { // if authenticated || access token invalid
-                    // Try to obtain a new token 
+                    // Try to obtain a new token
                     oRequest.open("POST", m_oController.m_oConstantservice.getAUTHURL() + '/protocol/openid-connect/token', bAsync);
                     oRequest.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
                     oRequest.send(sParams);
