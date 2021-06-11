@@ -21,7 +21,7 @@ function wImportAndPreprocess(Wasdi, asProductLinks, asProductNames, sWorkflowNa
    for i = 1:length(asProductLinks)
      asLinks.add(asProductLinks{i})
      asNames.add(asProductNames{i})
-   endfor
+   end
    
    Wasdi.importAndPreprocessWithLinks(asLinks, asNames, sWorkflowName, sSuffix, sProvider);
    
