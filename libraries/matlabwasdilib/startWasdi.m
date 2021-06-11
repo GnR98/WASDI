@@ -25,7 +25,8 @@ sFileName = 'startWasdi.m';
 sDir = which(sFileName);
 sDir = sDir(1:end-length(sFileName));
 
-%add the jsonlab path too
+%add the paths to the libraries too
+addpath(fullfile(sDir,'geotiff'));
 addpath(fullfile(sDir,'jsonlab'));
 
 
