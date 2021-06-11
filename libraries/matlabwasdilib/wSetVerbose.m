@@ -1,4 +1,3 @@
-+wasdi
 function wSetVerbose(Wasdi, bVerbose)
 %Set verbose flag
 %Syntax

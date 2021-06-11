@@ -1,2 +1,1 @@
-+wasdi
 function sWorkspaceId = wGetActiveWorkspace(Wasdi)%Gets the active workspace ID%Syntax%sWorkspaceId = wGetActiveWorkspace(Wasdi)%%%:param Wasdi: Wasdi object created after the wasdilib call%%:Returns:%  :sWorkspaceId: the ID of active WASDI workspace  if exist("Wasdi") < 1     disp('Wasdi variable does not exist')    return   end      sWorkspaceId = char(Wasdi.getActiveWorkspace());   end

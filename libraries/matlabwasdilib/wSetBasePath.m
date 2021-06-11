@@ -1,4 +1,3 @@
-+wasdi
 function wSetBasePath(Wasdi, sNewBasePath)
 %Set the base path
 %Syntax

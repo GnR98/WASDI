@@ -1,4 +1,3 @@
-+wasdi
 function wLog(Wasdi, sLogRow)
 %Add a row to the application logs. Locally, just print on the console if VERBOSE. On the server, it logs on the WASDI interface.
 %Syntax

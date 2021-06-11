@@ -1,4 +1,3 @@
-+wasdi
 function sStatus = wUpdateStatus(wasdi, sStatus, iPerc=[])
 %
 %updates the status and, optionally, the progress percent

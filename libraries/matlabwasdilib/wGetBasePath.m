@@ -1,4 +1,3 @@
-+wasdi
 function sBasePath = wGetBasePath(Wasdi)
 %Gets the base path
 %Syntax

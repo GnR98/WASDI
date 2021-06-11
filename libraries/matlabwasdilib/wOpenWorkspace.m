@@ -1,4 +1,3 @@
-+wasdi
 function sWorkspaceId =wOpenWorkspace(Wasdi, sWorkspaceName)
 %Open a Workspace
 %Syntax

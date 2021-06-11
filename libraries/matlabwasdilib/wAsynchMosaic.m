@@ -1,4 +1,3 @@
-+wasdi
 function sStatus=wAsynchMosaic(Wasdi, asInputFileNames, sOutputFile, sNoDataValue, sInputIgnoreValue)
 %Mosaic input images in the output file
 %Syntax

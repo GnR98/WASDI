@@ -1,4 +1,3 @@
-+wasdi
 function sStatus=wSubset(Wasdi, sInputFile, sOutputFile, dLatN, dLonW, dLatS, dLonE)
 %Make a Subset (tile) of an input image in a specified Lat Lon Rectangle
 %Syntax

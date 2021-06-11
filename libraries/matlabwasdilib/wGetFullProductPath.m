@@ -1,4 +1,3 @@
-+wasdi
 function sFullPath = wGetFullProductPath(Wasdi, sFileName)
 %Get the full local path of a product. If it is not present on the local PC
 %and DownloadActive flag is true the product will be downloaded

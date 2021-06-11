@@ -1,4 +1,3 @@
-+wasdi
 function sPassword = wGetPassword(Wasdi)
 %Gets the password
 %Syntax

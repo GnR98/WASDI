@@ -1,4 +1,3 @@
-+wasdi
 function sPath = wGetPath(Wasdi, sFileName)
 %Gets the path of given product
 %Syntax

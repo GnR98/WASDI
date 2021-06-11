@@ -1,4 +1,3 @@
-+wasdi
 function bUploadActive = wGetUploadActive(Wasdi)
 %
 %Gets whether Upload is active or not

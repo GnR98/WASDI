@@ -1,4 +1,3 @@
-+wasdi
 function sSessionId = wGetSessionId(Wasdi)
 %Get the session ID
 %Syntax

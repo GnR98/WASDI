@@ -1,4 +1,3 @@
-+wasdi
 function wasdiHello(Wasdi)
 %Hello world in WASDI. Useful for testing the setup
 %Syntax:

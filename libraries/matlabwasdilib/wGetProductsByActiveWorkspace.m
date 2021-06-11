@@ -1,4 +1,3 @@
-+wasdi
 function asProducts=wGetProductsByActiveWorkspace(Wasdi)
 %Get the List of Products in the active Workspace
 %Syntax

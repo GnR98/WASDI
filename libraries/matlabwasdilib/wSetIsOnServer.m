@@ -1,4 +1,3 @@
-+wasdi
 function wSetIsOnServer(Wasdi, bIsOnServer)
 %Set is on server flag
 %Syntax

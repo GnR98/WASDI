@@ -1,4 +1,3 @@
-+wasdi
 function sProcessPayload = wGetProcessorPayloadAsJSON(Wasdi, sProcessObjId)
 %Gets the payload of given processor as a JSON string
 %Syntax

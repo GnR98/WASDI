@@ -1,4 +1,3 @@
-+wasdi
 function sProcessId = wAsynchExecuteWorkflow(Wasdi, sWorkflow, asInputFiles, asOutputFiles)
 %Executes a SNAP workflow in Asynch mode. The workflow has to be uploaded in WASDI: it can be public or private of a user.
 %If it is private, it must be triggered from the owner.

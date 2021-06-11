@@ -1,4 +1,3 @@
-+wasdi
 function sParametersFilePath = wGetParametersFilePath(Wasdi)
 %Gets the parameters file path
 %Syntax

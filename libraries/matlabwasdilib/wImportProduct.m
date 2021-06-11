@@ -1,4 +1,3 @@
-+wasdi
 function sProcessObjId=wImportProduct(Wasdi, sProductLink, sBoundingBox='', sProvider='LSA')
 %Import an EO Image in WASDI
 %Syntax

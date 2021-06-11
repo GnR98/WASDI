@@ -1,4 +1,3 @@
-+wasdi
 function sWorkspaceId =wGetWorkspaceIdByName(Wasdi, sWorkspaceName)
 %Get the Id of a Workspace from the name
 %Syntax

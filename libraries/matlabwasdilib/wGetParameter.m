@@ -1,4 +1,3 @@
-+wasdi
 function sParameter = wGetParameter(Wasdi, sKey)
 %Get the value of a parameter identified by sKey in the parameters file
 %Syntax

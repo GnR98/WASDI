@@ -1,4 +1,3 @@
-+wasdi
 function asParams = wGetParams(Wasdi)
 %Gets processor parameters
 %Syntax

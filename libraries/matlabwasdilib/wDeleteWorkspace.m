@@ -1,4 +1,3 @@
-+wasdi
 function sStatus = wDeleteWorkspace(Wasdi, sWorkspaceName)
 %Deletes a workspace. If the user is not the workspace owner, then just the sharing is deleted
 %Syntax

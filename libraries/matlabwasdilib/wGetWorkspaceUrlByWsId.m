@@ -1,4 +1,3 @@
-+wasdi
 function sWorkspaceUrl = wGetWorkspaceUrlByWsId(Wasdi, sWorkspaceId)
 %Gets the workspace URL given its ID
 %Syntax:

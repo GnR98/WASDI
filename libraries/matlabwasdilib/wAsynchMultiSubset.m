@@ -1,4 +1,3 @@
-+wasdi
 function sReturn=wAsynchMultiSubset(Wasdi, sInputFile, asOutputFiles, adLatN, adLonW, adLatS, adLonE)
 %Extracts subsets of an image given its name and the desired bounding boxes.Asynchronous version
 %Syntax

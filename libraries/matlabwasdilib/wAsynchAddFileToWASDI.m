@@ -1,4 +1,3 @@
-+wasdi
 function sStatus =wAsynchAddFileToWASDI(Wasdi, sFileName)
 %Ingest a new file in the Active WASDI Workspace WITHOUT waiting for the result
 %The method takes a file saved in the workspace root (see getSaveFilePath) not already added to the WS

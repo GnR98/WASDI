@@ -1,4 +1,3 @@
-+wasdi
 function sWorkspaceOwner = wGetWorkspaceOwnerByName(Wasdi, sWorkspaceName)
 %
 %Gets the owner of the workspace given its name

@@ -1,4 +1,3 @@
-+wasdi
 function wSetMyProcId(Wasdi, sMyNewProcId)
 %Set the processor ID
 %Syntax
