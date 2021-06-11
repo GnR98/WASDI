@@ -1,3 +1,4 @@
++wasdi
 function wRefreshParameters(Wasdi)
 %Read again the parameters from the configured file
 %Syntax

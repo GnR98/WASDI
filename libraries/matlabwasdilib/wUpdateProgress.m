@@ -1,3 +1,4 @@
++wasdi
 function sOutputStatus =wUpdateProgress(Wasdi, iPerc)
 %Updates the progress of the processor
 %Syntax

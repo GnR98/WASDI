@@ -1,3 +1,4 @@
++wasdi
 function sProcessId=wAsynchCopyFileToSftp(Wasdi, sFileName, sRelativePath)
 %Copy file to SFTP folder, asynchronous version
 %Syntax

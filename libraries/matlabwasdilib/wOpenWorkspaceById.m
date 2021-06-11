@@ -1,3 +1,4 @@
++wasdi
 function sWorkspaceId=wOpenWorkspaceById(Wasdi,sWorkspaceId)
 %Opens a workspace given its ID
 %Syntax

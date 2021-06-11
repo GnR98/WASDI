@@ -1,3 +1,4 @@
++wasdi
 function wSetActiveWorkspaceId(Wasdi, sNewActiveWorkspaceId)
 %Set the active workspace
 %Syntax

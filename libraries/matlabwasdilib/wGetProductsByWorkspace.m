@@ -1,3 +1,4 @@
++wasdi
 function asProducts=wGetProductsByWorkspace(Wasdi, sWorkspaceName)
 %Get the List of Products in a Workspace
 %Syntax

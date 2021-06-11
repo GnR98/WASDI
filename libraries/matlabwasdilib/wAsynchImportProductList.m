@@ -1,3 +1,4 @@
++wasdi
 function asStatuses=wAsynchImportProductList(Wasdi, asProductLinks)
 %Import an EO Image in WASDI. This is the asynchronous version
 %Syntax

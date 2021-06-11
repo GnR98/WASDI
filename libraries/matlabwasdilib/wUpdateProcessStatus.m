@@ -1,3 +1,4 @@
++wasdi
 function sOutputStatus =wUpdateProcessStatus(Wasdi, sProcessId, sStatus, iPerc)
 %Updates the status of a Process
 %Syntax

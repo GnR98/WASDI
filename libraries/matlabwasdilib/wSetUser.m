@@ -1,3 +1,4 @@
++wasdi
 function wSetUser(Wasdi, sUser)
 %Set the user
 %Syntax

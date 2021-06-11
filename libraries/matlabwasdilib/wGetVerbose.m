@@ -1,3 +1,4 @@
++wasdi
 function bVerbose = wGetVerbose(Wasdi)
 %
 %Gets verbosity flag

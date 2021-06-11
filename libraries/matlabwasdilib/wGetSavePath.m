@@ -1,3 +1,4 @@
++wasdi
 function sSavePath =wGetSavePath(Wasdi)
 %Get the full local path where to save a product in the active workspace
 %Syntax

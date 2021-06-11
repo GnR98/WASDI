@@ -1,3 +1,4 @@
++wasdi
 function oProcessPayload = wGetProcessorPayload(Wasdi, sProcessObjId)
 %Gets the payload of given processor
 %Syntax

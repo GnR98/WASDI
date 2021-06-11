@@ -1,3 +1,4 @@
++wasdi
 function wImportAndPreprocess(Wasdi, asProductLinks, asProductNames, sWorkflowName, sSuffix, sProvider=[])
 %Import and preprocess a collection of EO products
 %Syntax

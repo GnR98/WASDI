@@ -1,3 +1,4 @@
++wasdi
 function wasdiLog(Wasdi, sLine)
 %Logs a line
 %Syntax

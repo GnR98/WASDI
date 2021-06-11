@@ -1,3 +1,4 @@
++wasdi
 function wSetWorkspaceBaseUrl(Wasdi, sUrl)
 %Set the workspace base URL
 %Syntax

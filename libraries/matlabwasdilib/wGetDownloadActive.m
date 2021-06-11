@@ -1,3 +1,4 @@
++wasdi
 function bDownloadActive = wGetDownloadActive(Wasdi)
 %Gets whether download is active or not
 %Syntax

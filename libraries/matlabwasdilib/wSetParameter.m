@@ -1,3 +1,4 @@
++wasdi
 function sParameter = wSetParameter(Wasdi, sKey, sValue)
 %Set the value of a parameter
 %Syntax

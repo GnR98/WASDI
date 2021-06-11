@@ -1,3 +1,4 @@
++wasdi
 function sProcessorPath = wGetProcessorPath(Wasdi)
 %Gets the parameters file path
 %Syntax

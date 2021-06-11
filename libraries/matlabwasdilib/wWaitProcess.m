@@ -1,3 +1,4 @@
++wasdi
 function sStatus =wWaitProcess(Wasdi, sProcessId)
 %Wait for the end of a process
 %Syntax

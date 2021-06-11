@@ -1,3 +1,4 @@
++wasdi
 function sStatus =wGetProcessStatus(Wasdi, sProcessId)
 %Get the status of a Process
 %Syntax

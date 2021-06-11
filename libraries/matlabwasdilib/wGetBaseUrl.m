@@ -1,3 +1,4 @@
++wasdi
 function sBaseUrl = wGetBaseUrl(Wasdi)
 %Gets the base URL
 %Syntax

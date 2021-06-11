@@ -1,3 +1,4 @@
++wasdi
 function sProcessId=wExecuteProcessor(Wasdi, sProcessorName, asParams)
 %Execute a WASDI processor asynchronously
 %Syntax

@@ -1,3 +1,4 @@
++wasdi
 function [asWorkspaceNames, asWorkspaceIds]=wGetWorkspaces(Wasdi);
 %Get the List of Workspace of the actual User
 %Syntax

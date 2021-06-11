@@ -1,3 +1,4 @@
++wasdi
 function [asWorkflowNames, asWorkflowIds]=wGetWorkflows(Wasdi)
 %Get the List of Workflows of the actual User
 %Syntax

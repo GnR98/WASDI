@@ -1,3 +1,4 @@
++wasdi
 function Wasdi = startWasdi(config_path)
 
 %find out what the library path is:

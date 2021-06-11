@@ -1,3 +1,4 @@
++wasdi
 function sUser = wGetUser(Wasdi)
 %
 %Gets the user
