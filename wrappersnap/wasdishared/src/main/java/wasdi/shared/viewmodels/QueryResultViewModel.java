@@ -17,6 +17,7 @@ public class QueryResultViewModel {
 	protected String link;
 	protected String footprint;
 	protected String provider;
+	protected String fileName;
 	
 	protected Map<String, String> properties = new HashMap<String, String>();
 	
@@ -96,5 +97,13 @@ public class QueryResultViewModel {
 	}
 	public void setProvider(String provider) {
 		this.provider = provider;
+	}
+
+	public String getFileName() {
+		return fileName;
+	}
+
+	public void setFileName(String sFileName) {
+		this.fileName = sFileName;
 	}	
 }
