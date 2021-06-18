@@ -224,7 +224,9 @@ public class QueryExecutorVIIRS extends QueryExecutor {
 			}
 	    	
 	    }
-		
+		for (QueryResultViewModel oResult : aoResults) {
+			addFileName(oResult);
+		}
 		return aoResults;
 	}
 	
