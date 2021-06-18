@@ -186,8 +186,11 @@ public class QueryExecutorLSA extends QueryExecutor {
 			String sRLSAResults = LSAHttpUtils.httpGetResults(sLSAQuery, (CookieManager) CookieHandler.getDefault());
 			
 			Utils.debugLog("QueryExecutorLSA.executeAndRetrieve: got result, start conversion");
-			
-			return m_oResponseTranslator.translateBatch(sRLSAResults, bFullViewModel, "");
+			List<QueryResultViewModel> aoResults = m_oResponseTranslator.translateBatch(sRLSAResults, bFullViewModel, "");
+			for (QueryResultViewModel oResult : aoResults) {
+				addFileName(oResult);
+			}
+			return aoResults;
 		
 		}
 		catch (Exception oEx) {
