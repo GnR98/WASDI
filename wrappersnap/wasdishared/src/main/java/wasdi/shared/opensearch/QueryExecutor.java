@@ -317,12 +317,43 @@ public abstract class QueryExecutor {
 	}
 
 	protected void addFileName(QueryResultViewModel oResult) {
-		String sFileName = oResult.getFileName();
-		if(Utils.isNullOrEmpty(sFileName)) {
-			sFileName = oResult.getTitle();
+		String sFileName = "";
+		try{
+			sFileName = oResult.getFileName();
+		} catch (Exception oE) {
+			Utils.debugLog("QueryExecutor.addFileName: could not read file name due to: " + oE + ", skipping");
+			sFileName = "";
 		}
-		//fix file extension
-		if(!sFileName.toLowerCase().endsWith(".zip") && !sFileName.toLowerCase().endsWith(".tif") && !sFileName.toLowerCase().endsWith(".tar.gz") || !sFileName.toLowerCase().endsWith(".nc")) {
+		if(Utils.isNullOrEmpty(sFileName)) {
+			try {
+				sFileName = oResult.getTitle();
+			}catch (Exception oE) {
+				Utils.debugLog("QueryExecutor.addFileName: could not read title due to: " + oE + ", aborting");
+				return;
+			}
+		}
+		if(Utils.isNullOrEmpty(sFileName)) {
+			Utils.debugLog("QueryExecutor.addFileName: could not find a suitable title or file name to work with, aborting");
+			return;
+		}
+		try {
+			//fix file extension
+			sFileName = inferAppropriateFileName(sFileName);
+			oResult.setFileName(sFileName);
+		} catch (Exception oE) {
+			Utils.debugLog("QueryExecutor.addFileName: could not add suffix due to " + oE + ", aborting");
+		}
+		
+		
+	}
+
+	public static String inferAppropriateFileName(String sFileName) {
+		if(sFileName.toLowerCase().endsWith(".zip") ||
+				!sFileName.toLowerCase().endsWith(".tif") ||
+				!sFileName.toLowerCase().endsWith(".tar.gz") ||
+				!sFileName.toLowerCase().endsWith(".nc")) {
+			Utils.debugLog("QueryExecutor.addFileName: filename already fine: " + sFileName);
+		} else {
 			if(sFileName.toUpperCase().startsWith("S1A") || sFileName.toUpperCase().startsWith("S1B") ||
 					sFileName.toUpperCase().startsWith("S2A") || sFileName.toUpperCase().startsWith("S2B") || 
 					sFileName.toUpperCase().startsWith("S3A") || sFileName.toUpperCase().startsWith("S3B") || sFileName.toUpperCase().startsWith("S3_") ||
@@ -337,9 +368,7 @@ public abstract class QueryExecutor {
 				sFileName = sFileName + ".zip";
 			}
 		}
-		oResult.setFileName(sFileName);
-		
-		
+		return sFileName;
 	}
 
 	protected List<QueryResultViewModel> buildResultLightViewModel(Document<Feed> oDocument, AbderaClient oClient, RequestOptions oOptions) {
