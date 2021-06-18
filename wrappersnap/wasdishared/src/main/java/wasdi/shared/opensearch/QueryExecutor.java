@@ -348,25 +348,29 @@ public abstract class QueryExecutor {
 	}
 
 	public static String inferAppropriateFileName(String sFileName) {
-		if(sFileName.toLowerCase().endsWith(".zip") ||
-				!sFileName.toLowerCase().endsWith(".tif") ||
-				!sFileName.toLowerCase().endsWith(".tar.gz") ||
-				!sFileName.toLowerCase().endsWith(".nc")) {
-			Utils.debugLog("QueryExecutor.addFileName: filename already fine: " + sFileName);
-		} else {
-			if(sFileName.toUpperCase().startsWith("S1A") || sFileName.toUpperCase().startsWith("S1B") ||
-					sFileName.toUpperCase().startsWith("S2A") || sFileName.toUpperCase().startsWith("S2B") || 
-					sFileName.toUpperCase().startsWith("S3A") || sFileName.toUpperCase().startsWith("S3B") || sFileName.toUpperCase().startsWith("S3_") ||
-					sFileName.toUpperCase().startsWith("S5") ||
-					sFileName.toUpperCase().startsWith("LC08") ||
-					sFileName.toUpperCase().startsWith("COP-DEM") ||
-					sFileName.toUpperCase().startsWith("S2GLC")
-					) {
-				if(sFileName.endsWith(".SAFE")) {
-					sFileName = sFileName.substring(0, sFileName.length()-5);
+		try {
+			if(sFileName.toLowerCase().endsWith(".zip") ||
+					!sFileName.toLowerCase().endsWith(".tif") ||
+					!sFileName.toLowerCase().endsWith(".tar.gz") ||
+					!sFileName.toLowerCase().endsWith(".nc")) {
+				Utils.debugLog("QueryExecutor.addFileName: filename already fine: " + sFileName);
+			} else {
+				if(sFileName.toUpperCase().startsWith("S1A") || sFileName.toUpperCase().startsWith("S1B") ||
+						sFileName.toUpperCase().startsWith("S2A") || sFileName.toUpperCase().startsWith("S2B") || 
+						sFileName.toUpperCase().startsWith("S3A") || sFileName.toUpperCase().startsWith("S3B") || sFileName.toUpperCase().startsWith("S3_") ||
+						sFileName.toUpperCase().startsWith("S5") ||
+						sFileName.toUpperCase().startsWith("LC08") ||
+						sFileName.toUpperCase().startsWith("COP-DEM") ||
+						sFileName.toUpperCase().startsWith("S2GLC")
+						) {
+					if(sFileName.endsWith(".SAFE")) {
+						sFileName = sFileName.substring(0, sFileName.length()-5);
+					}
+					sFileName = sFileName + ".zip";
 				}
-				sFileName = sFileName + ".zip";
 			}
+		} catch (Exception oE) {
+			Utils.debugLog("QueryExecutor.inferAppropriateFileName( " + sFileName + " ): could not infer file name due to " + oE + ", aborting");
 		}
 		return sFileName;
 	}
