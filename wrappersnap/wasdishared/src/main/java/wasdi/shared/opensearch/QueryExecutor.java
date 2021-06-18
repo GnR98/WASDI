@@ -308,11 +308,38 @@ public abstract class QueryExecutor {
 				catch (Exception e) {
 					Utils.debugLog("QueryExecutor.buildResultViewModel: Image Preview Cycle Exception " + e.toString());
 				}					
-			} 
+			}
+			addFileName(oResult);
 			aoResults.add(oResult);
 		} 
 		Utils.debugLog("QueryExecutor.buildResultViewModel: Search Done: found " + aoResults.size() + " results");
 		return aoResults;
+	}
+
+	protected void addFileName(QueryResultViewModel oResult) {
+		String sFileName = oResult.getFileName();
+		if(Utils.isNullOrEmpty(sFileName)) {
+			sFileName = oResult.getTitle();
+		}
+		//fix file extension
+		if(!sFileName.toLowerCase().endsWith(".zip") && !sFileName.toLowerCase().endsWith(".tif") && !sFileName.toLowerCase().endsWith(".tar.gz") || !sFileName.toLowerCase().endsWith(".nc")) {
+			if(sFileName.toUpperCase().startsWith("S1A") || sFileName.toUpperCase().startsWith("S1B") ||
+					sFileName.toUpperCase().startsWith("S2A") || sFileName.toUpperCase().startsWith("S2B") || 
+					sFileName.toUpperCase().startsWith("S3A") || sFileName.toUpperCase().startsWith("S3B") || sFileName.toUpperCase().startsWith("S3_") ||
+					sFileName.toUpperCase().startsWith("S5") ||
+					sFileName.toUpperCase().startsWith("LC08") ||
+					sFileName.toUpperCase().startsWith("COP-DEM") ||
+					sFileName.toUpperCase().startsWith("S2GLC")
+					) {
+				if(sFileName.endsWith(".SAFE")) {
+					sFileName = sFileName.substring(0, sFileName.length()-5);
+				}
+				sFileName = sFileName + ".zip";
+			}
+		}
+		oResult.setFileName(sFileName);
+		
+		
 	}
 
 	protected List<QueryResultViewModel> buildResultLightViewModel(Document<Feed> oDocument, AbderaClient oClient, RequestOptions oOptions) {
@@ -357,6 +384,7 @@ public abstract class QueryExecutor {
 				}
 			}
 			oResult.setPreview(null);
+			addFileName(oResult);
 			aoResults.add(oResult);
 		} 
 		Utils.debugLog("QueryExecutor.buildResultLightViewModel: Search Done: found " + aoResults.size() + " results");
