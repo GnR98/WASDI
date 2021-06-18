@@ -365,6 +365,7 @@ public class QueryExecutorPROBAV extends QueryExecutor  {
 				Utils.debugLog("Link Not Available" );
 			}
 
+			addFileName(oResult);
 			aoResults.add(oResult);
 		} 
 
