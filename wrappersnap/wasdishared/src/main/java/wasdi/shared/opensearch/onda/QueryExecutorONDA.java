@@ -211,9 +211,11 @@ public class QueryExecutorONDA extends QueryExecutor {
 		}
 		
 		List<QueryResultViewModel> aoResult = m_oResponseTranslator.translateBatch(sJson, bFullViewModel, m_sDownloadProtocol);
-		
 		if(null == aoResult || aoResult.isEmpty()) {
 			Utils.debugLog(s_sClassName + ".buildResultViewModel: no results");
+		}
+		for (QueryResultViewModel oResult : aoResult) {
+			addFileName(oResult);
 		}
 		return aoResult;
 	}
