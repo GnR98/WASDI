@@ -317,6 +317,10 @@ public abstract class QueryExecutor {
 	}
 
 	protected void addFileName(QueryResultViewModel oResult) {
+		if(null==oResult) {
+			Utils.debugLog("QueryExecutor.addFileName: oResult is null, aborting");
+			return;
+		}
 		String sFileName = "";
 		try{
 			sFileName = oResult.getFileName();
@@ -348,12 +352,16 @@ public abstract class QueryExecutor {
 	}
 
 	public static String inferAppropriateFileName(String sFileName) {
+		if(Utils.isNullOrEmpty(sFileName)) {
+			Utils.debugLog("QueryExecutor.inferAppropriateFileName: file name is null or empty, aborting");
+			return "";
+		}
 		try {
 			if(sFileName.toLowerCase().endsWith(".zip") ||
 					!sFileName.toLowerCase().endsWith(".tif") ||
 					!sFileName.toLowerCase().endsWith(".tar.gz") ||
 					!sFileName.toLowerCase().endsWith(".nc")) {
-				Utils.debugLog("QueryExecutor.addFileName: filename already fine: " + sFileName);
+				Utils.debugLog("QueryExecutor.inferAppropriateFileName: filename already fine: " + sFileName);
 			} else {
 				if(sFileName.toUpperCase().startsWith("S1A") || sFileName.toUpperCase().startsWith("S1B") ||
 						sFileName.toUpperCase().startsWith("S2A") || sFileName.toUpperCase().startsWith("S2B") || 
