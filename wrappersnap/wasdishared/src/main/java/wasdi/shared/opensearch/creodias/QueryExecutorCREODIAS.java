@@ -117,7 +117,11 @@ public class QueryExecutorCREODIAS extends QueryExecutor {
 	
 	@Override
 	protected List<QueryResultViewModel> buildResultViewModel(String sJson, boolean bFullViewModel){
-		return m_oResponseTranslator.translateBatch(sJson, bFullViewModel, m_sDownloadProtocol);
+		List<QueryResultViewModel> aoResults = m_oResponseTranslator.translateBatch(sJson, bFullViewModel, m_sDownloadProtocol);
+		for (QueryResultViewModel oResult : aoResults) {
+			addFileName(oResult);
+		}
+		return aoResults;
 	}
 	
 
