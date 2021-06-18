@@ -254,7 +254,11 @@ public class QueryExecutorEODC extends QueryExecutor {
 	@Override
 	protected List<QueryResultViewModel> buildResultViewModel(String sJson, boolean bFullViewModel){
 		DiasResponseTranslatorEODC oEODC = new DiasResponseTranslatorEODC();
-		return oEODC.translateBatch(sJson, bFullViewModel, "file");
+		List<QueryResultViewModel> aoResults = oEODC.translateBatch(sJson, bFullViewModel, "file");
+		for (QueryResultViewModel oResult : aoResults) {
+			addFileName(oResult);
+		}
+		return aoResults;
 	}
 }
 
