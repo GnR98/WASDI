@@ -358,9 +358,9 @@ public abstract class QueryExecutor {
 		}
 		try {
 			if(sFileName.toLowerCase().endsWith(".zip") ||
-					!sFileName.toLowerCase().endsWith(".tif") ||
-					!sFileName.toLowerCase().endsWith(".tar.gz") ||
-					!sFileName.toLowerCase().endsWith(".nc")) {
+					sFileName.toLowerCase().endsWith(".tif") ||
+					sFileName.toLowerCase().endsWith(".tar.gz") ||
+					sFileName.toLowerCase().endsWith(".nc")) {
 				Utils.debugLog("QueryExecutor.inferAppropriateFileName: filename already fine: " + sFileName);
 			} else {
 				if(sFileName.toUpperCase().startsWith("S1A") || sFileName.toUpperCase().startsWith("S1B") ||
