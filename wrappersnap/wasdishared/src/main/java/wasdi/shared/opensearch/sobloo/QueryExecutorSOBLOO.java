@@ -228,6 +228,9 @@ public class QueryExecutorSOBLOO extends QueryExecutor {
 		if(null == aoResult || aoResult.isEmpty()) {
 			Utils.debugLog(s_sClassName + ".buildResultViewModel: no results");
 		}
+		for (QueryResultViewModel oResult : aoResult) {
+			addFileName(oResult);
+		}
 		return aoResult;
 	}
 
