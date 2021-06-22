@@ -33,8 +33,9 @@ addpath(fullfile(sDir,'jsonlab'));
 %try to set JAVA_HOME automatically
 sJavaHome = getenv('JAVA_HOME');
 if exist(sJavaHome)<1
-  disp('WASDI: Warning: could not find JAVA_HOME, please define it');
+  disp("WASDI: JAVA_HOME not defined");
 else
+  disp(['WASDI: JAVA_HOME is ',sJavaHome]);
   sLower=lower(sJavaHome);
   %are we on windows?
   %C:\Program Files\Java\jdk1.8.0_211\jre\bin\server
