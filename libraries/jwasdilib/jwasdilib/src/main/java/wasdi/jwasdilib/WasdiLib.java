@@ -503,7 +503,7 @@ public class WasdiLib {
 				}
 			}
 
-			log("Config File Path " + sConfigFilePath);
+			log("WasdiLib.init: Config File Path " + sConfigFilePath);
 
 			m_sUser = ConfigReader.getPropValue("USER", "");
 			m_sPassword = ConfigReader.getPropValue("PASSWORD", "");
@@ -518,19 +518,22 @@ public class WasdiLib {
 				m_bVerbose = true;
 			}
 
-			log("SessionId from config " + m_sSessionId);
+			log("WasdiLib.init: sessionId from config " + getSessionId());
 
 			String sDownloadActive = ConfigReader.getPropValue("DOWNLOADACTIVE", "1");
 
 			if (sDownloadActive.equals("0") || sDownloadActive.toUpperCase().equals("FALSE")) {
 				m_bDownloadActive = false;
 			}
+			log("WasdiLib.init:  download active: " + getDownloadActive());
 
 			String sUploadactive = ConfigReader.getPropValue("UPLOADACTIVE", "1");
 
 			if (sUploadactive.equals("0") || sUploadactive.toUpperCase().equals("FALSE")) {
 				setUploadActive(false);
 			}
+			
+			log("WasdiLib.init: upload active: " + getUploadActive());
 
 			String sIsOnServer = ConfigReader.getPropValue("ISONSERVER", "0");
 
@@ -542,6 +545,8 @@ public class WasdiLib {
 			} else {
 				m_bIsOnServer = false;
 			}
+			
+			log("WasdiLib.init: is on server: " + getIsOnServer() );
 
 			if (m_sBasePath.equals("")) {
 
@@ -558,11 +563,15 @@ public class WasdiLib {
 					m_sBasePath = "/data/wasdi/";
 				}
 			}
+			
+			log("WasdiLib.init: base path: " + getBasePath() );
 
 			// Read the parameters file
 			m_oParametersReader = new ParametersReader(m_sParametersFilePath);
 			m_aoParams = m_oParametersReader.getParameters();
 
+			log("WasdiLib.init: parameters file path: " + getParametersFilePath() ); 
+			
 			if (internalInit()) {
 
 				if (m_sActiveWorkspace == null || m_sActiveWorkspace.equals("")) {
