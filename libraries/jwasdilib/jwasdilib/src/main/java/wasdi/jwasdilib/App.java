@@ -71,7 +71,7 @@ public class App
         //testMultisubset(oLib);
         
         
-        //testGetParamsAsJsonString(oLib);
+        testGetParamsAsJsonString(oLib);
         
         System.out.println("JWasdiLib Test Done");
         oLib.updateStatus("DONE");

@@ -25,18 +25,18 @@ public class ParametersReader {
             Properties oProp = new Properties();
             
             if (m_sParameterFilePath == null) {
-            	System.out.println("Parameter file not set");
+            	System.out.println("Parameter file null, aborting");
             	return;
             }
             
-            if (m_sParameterFilePath.equals("")) {
-            	System.out.println("Parameter file not set");
+            if (m_sParameterFilePath.isEmpty()) {
+            	System.out.println("Parameter file blank, aborting");
             	return;
             }
 
             File oParamFile = new File(m_sParameterFilePath);
-            if (oParamFile.exists() == false) {
-            	System.out.println("Parameter file " + m_sParameterFilePath + " does not exists");
+            if (!oParamFile.exists()) {
+            	System.out.println("Parameter file " + m_sParameterFilePath + " does not exist, aborting");
             	return;            	
             }
             
@@ -50,7 +50,15 @@ public class ParametersReader {
             //Clear all
             m_aoProperties.clear();
 
-            String sKey = aoProperties.nextElement();
+            while(aoProperties.hasMoreElements()) {
+            	String sKey = aoProperties.nextElement();
+            	m_aoProperties.put(sKey, oProp.getProperty(sKey));
+            }
+            /*
+            String sKey = null;
+            if(aoProperties.hasMoreElements()) {
+            	sKey = aoProperties.nextElement();
+            }
 
             while (sKey != null) {
                 m_aoProperties.put(sKey, oProp.getProperty(sKey));
@@ -61,6 +69,7 @@ public class ParametersReader {
                     break;
                 }
             }
+            */
 
         } catch (Exception e) {
             e.printStackTrace();
