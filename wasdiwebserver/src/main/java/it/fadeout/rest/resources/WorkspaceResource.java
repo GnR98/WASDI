@@ -237,6 +237,7 @@ public class WorkspaceResource {
 			Utils.debugLog("WorkspaceResource.GetWorkspaceEditorViewModel: invalid session");
 			return null;
 		}
+
 		if (Utils.isNullOrEmpty(oUser.getUserId()))
 			return null;
 
@@ -248,7 +249,10 @@ public class WorkspaceResource {
 			if (Utils.isNullOrEmpty(sWorkspaceId)) {
 				return oVM;
 			}
-
+			// checks that the user is the owner of the workspace or has the access rights
+			if (!PermissionsUtils.canUserAccessWorkspace(oUser.getUserId(),sWorkspaceId)) {
+				return null;
+			}
 			Utils.debugLog("WorkspaceResource.GetWorkspaceEditorViewModel: read workspaces " + sWorkspaceId);
 
 			// Create repo
