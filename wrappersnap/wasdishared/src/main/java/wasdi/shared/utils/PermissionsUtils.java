@@ -6,6 +6,8 @@
  */
 package wasdi.shared.utils;
 
+import wasdi.shared.business.User;
+import wasdi.shared.business.Workspace;
 import wasdi.shared.data.ProcessWorkspaceRepository;
 import wasdi.shared.data.WorkspaceRepository;
 import wasdi.shared.data.WorkspaceSharingRepository;
@@ -42,6 +44,15 @@ public class PermissionsUtils {
 			Utils.debugLog("PermissionsUtils.canUserAccessWorkspace( " + sUserId + ", " + sWorkspaceId + " ): error: " + oE);
 		}
 		return false;
+	}
+
+	/**
+	 * @param oUser an User Object
+	 * @param oWorkspace a valid workspace Object
+	 * @return true if the user owns the workspace, or if the owner shared the workspace with the user, false otherwise
+	 */
+	public static boolean canUserAccessWorkspace(User oUser, Workspace oWorkspace) {
+		return canUserAccessWorkspace(oUser.getUserId(),oWorkspace.getWorkspaceId());
 	}
 
 
