@@ -5,6 +5,8 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import javax.servlet.ServletConfig;
 import javax.ws.rs.DELETE;
@@ -58,6 +60,14 @@ public class WorkspaceResource {
 	@Context
 	ServletConfig m_oServletConfig;
 
+	/**
+	 * Support call to implement the WASDI catalog.
+	 * Retrieves a list of workspaces containing the requested product.
+	 * Legacy solution with the objective to access products.
+	 * @param sSessionId The currrent session ID in the header
+	 * @param sProductName The product name to be searched
+	 * @return ArrayList of Workspace info View Model
+	 */
 	@GET
 	@Path("/workspacelistbyproductname")
 	@Produces({ "application/xml", "application/json", "text/xml" })
@@ -95,7 +105,7 @@ public class WorkspaceResource {
 
 			Workspace oWorkspace = oWorkspaceRepository.getWorkspace(sWorkspaceID);
 
-			if (null != oWorkspace) {
+			if (null != oWorkspace && PermissionsUtils.canUserAccessWorkspace(oUser, oWorkspace)) {
 				WorkspaceListInfoViewModel oTemp = new WorkspaceListInfoViewModel();
 				oTemp.setWorkspaceId(oWorkspace.getWorkspaceId());
 				oTemp.setWorkspaceName(oWorkspace.getName());
@@ -107,17 +117,21 @@ public class WorkspaceResource {
 		return aoResult;
 	}
 
+	/**
+	 * Retrieves a list of workspace of the current user, using the session Id
+	 * @param sSessionId The current session ID
+	 * @return an arraylist of the workspace that the user have access to (also the shared ones)
+	 */
 	@GET
 	@Path("/byuser")
 	@Produces({ "application/xml", "application/json", "text/xml" })
-	public ArrayList<WorkspaceListInfoViewModel> getListByUser(@HeaderParam("x-session-token") String sSessionId) {
+	public List<WorkspaceListInfoViewModel> getListByUser(@HeaderParam("x-session-token") String sSessionId) {
 
 		Utils.debugLog("WorkspaceResource.GetListByUser()");
-		
 
 		User oUser = Wasdi.getUserFromSession(sSessionId);
 
-		ArrayList<WorkspaceListInfoViewModel> aoWSList = new ArrayList<>();
+		List<WorkspaceListInfoViewModel> aoWSList = new ArrayList<>(); // return object
 
 		try {
 			if(Utils.isNullOrEmpty(sSessionId)) {
@@ -140,79 +154,40 @@ public class WorkspaceResource {
 			WorkspaceSharingRepository oWorkspaceSharingRepository = new WorkspaceSharingRepository();
 
 			// Get Workspace List
-			List<Workspace> aoWorkspaces = oWSRepository.getWorkspaceByUser(oUser.getUserId());
-
-			// For each
-			for (int iWorkspaces = 0; iWorkspaces < aoWorkspaces.size(); iWorkspaces++) {
-				// Create View Model
-				WorkspaceListInfoViewModel oWSViewModel = new WorkspaceListInfoViewModel();
-				Workspace oWorkspace = aoWorkspaces.get(iWorkspaces);
-
-				oWSViewModel.setOwnerUserId(oUser.getUserId());
-				oWSViewModel.setWorkspaceId(oWorkspace.getWorkspaceId());
-				oWSViewModel.setWorkspaceName(oWorkspace.getName());
-
-				// Get Sharings
-				List<WorkspaceSharing> aoSharings = oWorkspaceSharingRepository
-						.getWorkspaceSharingByWorkspace(oWorkspace.getWorkspaceId());
-
-				// Add Sharings to View Model
-				if (aoSharings != null) {
-					for (int iSharings = 0; iSharings < aoSharings.size(); iSharings++) {
-						if (oWSViewModel.getSharedUsers() == null) {
-							oWSViewModel.setSharedUsers(new ArrayList<String>());
-						}
-
-						oWSViewModel.getSharedUsers().add(aoSharings.get(iSharings).getUserId());
-					}
-				}
-
-				aoWSList.add(oWSViewModel);
-
-			}
-
-			// Get the list of workspace shared with this user
+			List<Workspace> workspaceByUser = oWSRepository.getWorkspaceByUser(oUser.getUserId());
+			// append workspaces from sharings
 			List<WorkspaceSharing> aoSharedWorkspaces = oWorkspaceSharingRepository
 					.getWorkspaceSharingByUser(oUser.getUserId());
 
-			if (aoSharedWorkspaces.size() > 0) {
-				// For each
-				for (int iWorkspaces = 0; iWorkspaces < aoSharedWorkspaces.size(); iWorkspaces++) {
+			aoSharedWorkspaces.stream().forEach(curSharing -> {
+				workspaceByUser.add(oWSRepository.getWorkspace(curSharing.getWorkspaceId()));
+			});
 
-					// Create View Model
-					WorkspaceListInfoViewModel oWSViewModel = new WorkspaceListInfoViewModel();
-					Workspace oWorkspace = oWSRepository
-							.getWorkspace(aoSharedWorkspaces.get(iWorkspaces).getWorkspaceId());
+			aoWSList = workspaceByUser
+					.stream()
+					.map(oWorkspace -> {
+						WorkspaceListInfoViewModel oWSViewModel = new WorkspaceListInfoViewModel();
+						oWSViewModel.setOwnerUserId(oWorkspace.getUserId());
+						oWSViewModel.setWorkspaceId(oWorkspace.getWorkspaceId());
+						oWSViewModel.setWorkspaceName(oWorkspace.getName());
 
-					if (oWorkspace == null) {
-						Utils.debugLog("WorkspaceResult.getListByUser: WS Shared not available "
-								+ aoSharedWorkspaces.get(iWorkspaces).getWorkspaceId());
-						continue;
-					}
+						// Get Sharings
+						List<WorkspaceSharing> aoSharings = oWorkspaceSharingRepository
+								.getWorkspaceSharingByWorkspace(oWorkspace.getWorkspaceId());
 
-					oWSViewModel.setOwnerUserId(oWorkspace.getUserId());
-					oWSViewModel.setWorkspaceId(oWorkspace.getWorkspaceId());
-					oWSViewModel.setWorkspaceName(oWorkspace.getName());
+						// Add Sharings to View Model
+						if (aoSharings != null) {
+							for (int iSharings = 0; iSharings < aoSharings.size(); iSharings++) {
+								if (oWSViewModel.getSharedUsers() == null) {
+									oWSViewModel.setSharedUsers(new ArrayList<String>());
+								}
 
-					// Get Sharings
-					List<WorkspaceSharing> aoSharings = oWorkspaceSharingRepository
-							.getWorkspaceSharingByWorkspace(oWorkspace.getWorkspaceId());
-
-					// Add Sharings to View Model
-					if (aoSharings != null) {
-						for (int iSharings = 0; iSharings < aoSharings.size(); iSharings++) {
-							if (oWSViewModel.getSharedUsers() == null) {
-								oWSViewModel.setSharedUsers(new ArrayList<String>());
+								oWSViewModel.getSharedUsers().add(aoSharings.get(iSharings).getUserId());
 							}
-
-							oWSViewModel.getSharedUsers().add(aoSharings.get(iSharings).getUserId());
 						}
-					}
+						return oWSViewModel;
+					}).collect(Collectors.toList());
 
-					aoWSList.add(oWSViewModel);
-
-				}
-			}
 
 		} catch (Exception oEx) {
 			oEx.toString();
