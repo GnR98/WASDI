@@ -42,3 +42,4 @@ require('./app/dialogs/processor_logs/ProcessorLogsController.js');
 require('./app/dialogs/share_workspace/ShareWorkspaceController.js');
 require('./app/dialogs/manual_insert_bbox/ManualInsertBboxController.js');
 require('./app/dialogs/payload_dialog/PayloadDialogController.js');
+require('./app/dialogs/workflow_edit/WorkflowController.js');

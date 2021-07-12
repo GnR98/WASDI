@@ -229,6 +229,7 @@ wasdiApp.controller("FilterBandController", window.FilterBandController);
 wasdiApp.controller("MaskManagerController", window.MaskManagerController);
 wasdiApp.controller("ImportAdvanceFiltersController", window.ImportAdvanceFiltersController);
 wasdiApp.controller("WorkFlowManagerController", window.WorkFlowManagerController);
+wasdiApp.controller("WorkFlowController", window.WorkFlowController);
 wasdiApp.controller("GetListOfWorkspacesController", window.GetListOfWorkspacesController);
 wasdiApp.controller("ProcessorController", window.ProcessorController);
 wasdiApp.controller("WorkspaceDetailsController", window.WorkspaceDetailsController);
