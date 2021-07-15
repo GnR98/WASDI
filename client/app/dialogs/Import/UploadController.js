@@ -17,6 +17,8 @@ var UploadController = (function() {
         this.m_bIsAccountCreated = null;
         this.m_sEmailNewPassword="";
         this.m_sEmailNewUser="";
+        this.m_bShowStyle = false;
+        this.m_sStyleString = "";
 
         this.m_oUser = this.m_oConstantsService.getUser();
         this.m_bIsVisibleLoadIcon = false;
