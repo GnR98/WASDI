@@ -5,9 +5,12 @@ import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.Base64;
 
 import javax.servlet.ServletConfig;
 import javax.ws.rs.*;
@@ -15,6 +18,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.io.FileUtils;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 
@@ -922,7 +926,7 @@ public class ProductResource {
      * @param sWorkspaceId   Id of the workspace in which the product is stored
      * @param bDeleteLayer   Flag to control the behaviour of deletion
      * @param as_ProductList An array containing the list of product names to be deleted
-     * @return Primitive result with 200 & TRUE in case all files was deleted. 207 & FALSE in case not all file was deleted
+     * @return Primitive result with 200 & TRUE in case all files was deleted. 207 & FALSE in case not single file was deleted
      */
     @POST
     @Path("deletelist")
@@ -933,7 +937,7 @@ public class ProductResource {
         // Support variable used to identify if deletions of one or more products failed
         AtomicBoolean bDirty = new AtomicBoolean(false);
         as_ProductList.stream().forEach(sFile -> {
-            // if one deletion fail is detected the bDirty boolean becames true
+            // if one deletion fail is detected the bDirty boolean became true
             bDirty.set(bDirty.get() || ! deleteProduct(sSessionId,sFile,bDeleteFile,sWorkspaceId,bDeleteLayer).getBoolValue());
         });
 
@@ -946,5 +950,51 @@ public class ProductResource {
 
         return oPrimitiveResult;
     }
+
+    /**
+     * Retrieves the available styles from the GeoServer instance in use.
+     * Uses the configuration on the server to use the Geoserver Api
+     * @param sSessionId The session of the current user
+     * @return a List of the available style on the current server
+     */
+    @GET
+    @Path("styles")
+    public List<String> getStyle(@HeaderParam("x-session-token") String sSessionId){
+        // Check session
+        User oUser = Wasdi.getUserFromSession(sSessionId);
+        try {
+            // Domain Check
+            if (oUser == null) {
+                Utils.debugLog("ProductResource.DeleteProduct: invalid session");
+                return null;
+            }
+            if (Utils.isNullOrEmpty(oUser.getUserId())) {
+                String sMessage = "user not found";
+                Utils.debugLog("ProductResource.DeleteProduct: " + sMessage);
+            }
+            String sGeoServerUrl = m_oServletConfig.getInitParameter("GS_URL");
+            String sGeoServerUser = m_oServletConfig.getInitParameter("GS_USER");
+            String sGeoServerPwd = m_oServletConfig.getInitParameter("GS_PASSWORD");
+            String sGeoServerWS = m_oServletConfig.getInitParameter("GS_WORKSPACE");
+
+            String sUrl= sGeoServerUrl + "/rest/styles.json";
+            String auth = sGeoServerUser + ":" + sGeoServerPwd;
+
+            String encodedAuth = Base64.getEncoder().encodeToString(auth.getBytes(StandardCharsets.UTF_8));
+
+            // get call for styles
+            HashMap<String, String> asHeaders = new HashMap<>();
+            asHeaders.put("Authorization","Basic "+encodedAuth);
+            String sResponse = Wasdi.httpGet(sUrl, asHeaders);
+            // make call to GeoServer instance
+            System.out.println(sResponse);
+            //String sResponse = Wasdi.httpGet(sUrl, asHeaders);
+        }
+            catch (Exception oe){}
+
+        return null;
+        }
+
+
 
 }
