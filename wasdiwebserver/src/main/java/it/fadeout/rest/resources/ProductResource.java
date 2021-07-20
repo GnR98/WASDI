@@ -6,11 +6,8 @@ import java.io.FilenameFilter;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.Base64;
 
 import javax.servlet.ServletConfig;
 import javax.ws.rs.*;
@@ -18,7 +15,10 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.apache.commons.collections.map.HashedMap;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.FileUtils;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 
@@ -32,16 +32,14 @@ import wasdi.shared.data.DownloadedFilesRepository;
 import wasdi.shared.data.ProductWorkspaceRepository;
 import wasdi.shared.data.PublishedBandsRepository;
 import wasdi.shared.geoserver.GeoServerManager;
+import wasdi.shared.geoserver.GeoServerStyle;
 import wasdi.shared.parameters.IngestFileParameter;
 import wasdi.shared.parameters.ReadMetadataParameter;
 import wasdi.shared.rabbit.Send;
 import wasdi.shared.utils.PermissionsUtils;
 import wasdi.shared.utils.SerializationUtils;
 import wasdi.shared.utils.Utils;
-import wasdi.shared.viewmodels.GeorefProductViewModel;
-import wasdi.shared.viewmodels.MetadataViewModel;
-import wasdi.shared.viewmodels.PrimitiveResult;
-import wasdi.shared.viewmodels.ProductViewModel;
+import wasdi.shared.viewmodels.*;
 
 @Path("/product")
 public class ProductResource {
@@ -815,8 +813,8 @@ public class ProductResource {
             }
 
             if (bDeleteLayer) {
-            	
-            	try {
+
+                try {
                     // Delete layerId on Geoserver
                     GeoServerManager oGeoServerManager = new GeoServerManager(m_oServletConfig.getInitParameter("GS_URL"), m_oServletConfig.getInitParameter("GS_USER"), m_oServletConfig.getInitParameter("GS_PASSWORD"));
 
@@ -839,11 +837,10 @@ public class ProductResource {
                         } catch (Exception oEx) {
                             Utils.debugLog("ProductResource.DeleteProduct: " + oEx);
                         }
-                    }            		
-            	}
-            	catch (Exception oEx) {
+                    }
+                } catch (Exception oEx) {
                     Utils.debugLog("ProductResource.DeleteProduct: Exception deleting layers: " + oEx);
-                }            	
+                }
             }
 
             // delete the product-workspace related records on db and the Downloaded File Entry
@@ -932,13 +929,13 @@ public class ProductResource {
     @Path("deletelist")
     @Consumes(MediaType.APPLICATION_JSON)
     public PrimitiveResult deleteMultipleProduct(@HeaderParam("x-session-token") String sSessionId, @QueryParam("bDeleteFile") Boolean bDeleteFile,
-                                         @QueryParam("sWorkspaceId") String sWorkspaceId, @QueryParam("bDeleteLayer") Boolean bDeleteLayer,
-                                         List<String> as_ProductList) {
+                                                 @QueryParam("sWorkspaceId") String sWorkspaceId, @QueryParam("bDeleteLayer") Boolean bDeleteLayer,
+                                                 List<String> as_ProductList) {
         // Support variable used to identify if deletions of one or more products failed
         AtomicBoolean bDirty = new AtomicBoolean(false);
         as_ProductList.stream().forEach(sFile -> {
             // if one deletion fail is detected the bDirty boolean became true
-            bDirty.set(bDirty.get() || ! deleteProduct(sSessionId,sFile,bDeleteFile,sWorkspaceId,bDeleteLayer).getBoolValue());
+            bDirty.set(bDirty.get() || !deleteProduct(sSessionId, sFile, bDeleteFile, sWorkspaceId, bDeleteLayer).getBoolValue());
         });
 
         PrimitiveResult oPrimitiveResult = new PrimitiveResult();
@@ -954,12 +951,13 @@ public class ProductResource {
     /**
      * Retrieves the available styles from the GeoServer instance in use.
      * Uses the configuration on the server to use the Geoserver Api
+     *
      * @param sSessionId The session of the current user
      * @return a List of the available style on the current server
      */
     @GET
     @Path("styles")
-    public List<String> getStyle(@HeaderParam("x-session-token") String sSessionId){
+    public List<String> getStyle(@HeaderParam("x-session-token") String sSessionId) {
         // Check session
         User oUser = Wasdi.getUserFromSession(sSessionId);
         try {
@@ -977,23 +975,36 @@ public class ProductResource {
             String sGeoServerPwd = m_oServletConfig.getInitParameter("GS_PASSWORD");
             String sGeoServerWS = m_oServletConfig.getInitParameter("GS_WORKSPACE");
 
-            String sUrl= sGeoServerUrl + "/rest/styles.json";
+            String sUrl = sGeoServerUrl + "/rest/styles.json";
             String auth = sGeoServerUser + ":" + sGeoServerPwd;
 
-            String encodedAuth = Base64.getEncoder().encodeToString(auth.getBytes(StandardCharsets.UTF_8));
+            String sEncodedAuth = Base64.getEncoder().encodeToString(auth.getBytes(StandardCharsets.UTF_8));
 
             // get call for styles
             HashMap<String, String> asHeaders = new HashMap<>();
-            asHeaders.put("Authorization","Basic "+encodedAuth);
+            asHeaders.put("Authorization", "Basic " + sEncodedAuth);
             String sResponse = Wasdi.httpGet(sUrl, asHeaders);
             // make call to GeoServer instance
-            System.out.println(sResponse);
             //String sResponse = Wasdi.httpGet(sUrl, asHeaders);
+
+            ObjectMapper s_oMapper = new ObjectMapper();
+            GeoServerStyle oStyles = s_oMapper.readValue(sResponse, GeoServerStyle.class);
+            if (oStyles == null) return null;
+
+            if (oStyles.getStyles().getStyle().size()>0) {
+                System.out.println("ok");
+
+
+            }
+            return null;
+        } catch (JsonMappingException e) {
+            e.printStackTrace();
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
         }
-            catch (Exception oe){}
 
         return null;
-        }
+    }
 
 
 
