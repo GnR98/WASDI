@@ -28,6 +28,7 @@ var wasdiApp = angular.module('wasdi', [
     'wasdi.SnapOperationService',
     'wasdi.SatelliteService',
     'wasdi.CatalogService',
+    'wasdi.GeoserverService',
     'wasdi.PagesService',
     'wasdi.FilterService',
     'wasdi.ProcessorService',

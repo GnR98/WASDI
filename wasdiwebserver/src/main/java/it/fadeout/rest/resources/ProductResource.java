@@ -980,21 +980,20 @@ public class ProductResource {
 
             String sEncodedAuth = Base64.getEncoder().encodeToString(auth.getBytes(StandardCharsets.UTF_8));
 
-            // get call for styles
+            // Authorization header
             HashMap<String, String> asHeaders = new HashMap<>();
             asHeaders.put("Authorization", "Basic " + sEncodedAuth);
             String sResponse = Wasdi.httpGet(sUrl, asHeaders);
-            // make call to GeoServer instance
-            //String sResponse = Wasdi.httpGet(sUrl, asHeaders);
 
+            // make call to GeoServer instance
             ObjectMapper s_oMapper = new ObjectMapper();
             GeoServerStyle oStyles = s_oMapper.readValue(sResponse, GeoServerStyle.class);
             if (oStyles == null) return null;
 
             if (oStyles.getStyles().getStyle() != null && oStyles.getStyles().getStyle().size() > 0) {
                 ArrayList<String> asReturnList = new ArrayList<>();
-                for (GeoServerStyle.Style sElement : oStyles.getStyles().getStyle()) {
-                    asReturnList.add(sElement.getName());
+                for (GeoServerStyle.Style oStyle : oStyles.getStyles().getStyle()) {
+                    asReturnList.add(oStyle.getName());
                 }
                 return asReturnList;
             }
