@@ -991,12 +991,16 @@ public class ProductResource {
             GeoServerStyle oStyles = s_oMapper.readValue(sResponse, GeoServerStyle.class);
             if (oStyles == null) return null;
 
-            if (oStyles.getStyles().getStyle().size()>0) {
-                System.out.println("ok");
-
-
+            if (oStyles.getStyles().getStyle() != null && oStyles.getStyles().getStyle().size() > 0) {
+                ArrayList<String> asReturnList = new ArrayList<>();
+                for (GeoServerStyle.Style sElement : oStyles.getStyles().getStyle()) {
+                    asReturnList.add(sElement.getName());
+                }
+                return asReturnList;
             }
-            return null;
+
+            return new ArrayList<>(); // no resource
+
         } catch (JsonMappingException e) {
             e.printStackTrace();
         } catch (JsonProcessingException e) {
@@ -1005,7 +1009,6 @@ public class ProductResource {
 
         return null;
     }
-
 
 
 }
