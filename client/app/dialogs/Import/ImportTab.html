@@ -28,8 +28,13 @@
                     ng-hide="m_oController.m_bShowStyle === false"
                     ng-click="m_oController.m_bShowStyle = !m_oController.m_bShowStyle"></i>
                 <span> Select a custom style</span>
-                <input type="text" placeholder="Insert style name" class="ng-hide" aria-hidden="true"
-                    ng-hide="m_oController.m_bShowStyle === false" ng-model="m_oController.m_sStyleString"></input>
+                <div class="ng-hide" aria-hidden="true" ng-hide="m_oController.m_bShowStyle === false"
+                    ng-model="m_oController.m_sStyleSelectedString">
+                    <dropdownmenudirective list-of-values="m_oController.m_asStyles"
+                        selected-value="m_oController.m_sStyleSelectedString" enable-search-filter="true"
+                        dropdown-name="'Select the style'"></dropdownmenudirective>
+                </div>
+
             </div>
 
             <div class="col-v4">

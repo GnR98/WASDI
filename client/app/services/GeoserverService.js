@@ -2,8 +2,8 @@
 /**
  * Module tp handle Geoserver related calls 
  */
-angular.module('wasdi.GeoserverSerice', ['wasdi.GeoserverSerice']).
-service('GeoserverSerice', ['$http',  'ConstantsService', function ($http, oConstantsService) {
+angular.module('wasdi.GeoserverService', ['wasdi.GeoserverService']).
+service('GeoserverService', ['$http',  'ConstantsService', function ($http, oConstantsService) {
     this.APIURL = oConstantsService.getAPIURL();
     this.m_oHttp = $http;
 
