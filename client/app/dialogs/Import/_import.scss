@@ -1,4 +1,23 @@
 .import-file-modal {
+    .dropdown-menu-container .dropdown .btn {
+    font-weight: 900;
+    }
+
+    
+    .dropdown-menu > li > a{
+        font-weight: 900;
+    }
+
+    .dropdown {
+        width: 100%;
+    }
+    .dropdown-menu-container .dropdown .btn {
+        width: inherit;
+        border-radius: 0;
+        border-style: solid;
+        border-color: #2d394f;
+        border-width: 2px;
+    }
 
     .modal-dialog {
         //width: 90% !important;
@@ -18,17 +37,15 @@
             }
 
             .modal-body {
-                //max-height: none !important;
-                .user-options{
-                    .wasdi-input{
+                height: 50vh;
+                .user-options {
+                    .wasdi-input {
                         margin-top: 0;
                     }
-                    .btn-wasdi{
+                    .btn-wasdi {
                         margin-top: 1px;
                     }
                 }
-
-
             }
 
             .modal-footer {
