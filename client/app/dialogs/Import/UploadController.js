@@ -34,6 +34,7 @@ var UploadController = (function () {
         this.isCreatedAccountUpload();
 
         var oController = this;
+
         $scope.close = function (result) {
             oClose(result, 500); // close, but give 500ms for bootstrap to animate
         };
@@ -43,10 +44,27 @@ var UploadController = (function () {
         };
         // init the list of styles 
         this.m_oGeoserverService.getStyles().then(function (data) {
-            if (data.data != null) {
-                //init the available styles
-                this.m_asStyles = data.data;
+            
+            if (utilsIsObjectNullOrUndefined(data.data) === true) {
+                return [];
             }
+            var iNumberOfWorkspaces = data.data.length;
+            oController.m_asStyles = [];
+            for (var iIndex = 0; iIndex < iNumberOfWorkspaces; iIndex++) {
+    
+                var oValue = {
+                    name: data.data[iIndex],
+                    id: data.data[iIndex]
+                };
+                oController.m_asStyles.push(oValue);
+            }
+           
+            /*if (data.data != null) {
+                //init the available styles
+                // this field is used by search enabled directive that requires array of object with
+                // a "name" field. The map converts the string array in compatible objects
+                this.m_asStyles = data.data.map(name => ({name}));;
+            }*/
 
         });
 

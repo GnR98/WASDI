@@ -21,34 +21,34 @@
         </div>
 
         <div class="row-v4">
-            <div class="col-v4">
+            <div class="col-v4-3">
                 <i class=" fa fa-square-o ng-hide" aria-hidden="true" ng-hide="m_oController.m_bShowStyle === true"
                     ng-click="m_oController.m_bShowStyle = !m_oController.m_bShowStyle"></i>
                 <i class="fa fa-check-square-o  ng-hide" aria-hidden="true"
                     ng-hide="m_oController.m_bShowStyle === false"
                     ng-click="m_oController.m_bShowStyle = !m_oController.m_bShowStyle"></i>
                 <span> Select a custom style</span>
-                <div class="ng-hide" aria-hidden="true" ng-hide="m_oController.m_bShowStyle === false"
-                    ng-model="m_oController.m_sStyleSelectedString">
-                    <dropdownmenudirective list-of-values="m_oController.m_asStyles"
-                        selected-value="m_oController.m_sStyleSelectedString" enable-search-filter="true"
-                        dropdown-name="'Select the style'"></dropdownmenudirective>
-                </div>
-
+            </div>
+            <div class="ng-hide col-v4-3" aria-hidden="true" ng-hide="m_oController.m_bShowStyle === false">
+                <dropdownmenudirective list-of-values="m_oController.m_asStyles"
+                    selected-value="m_oController.m_sStyleSelectedString" enable-search-filter="true"
+                    dropdown-name="'Select the style'"></dropdownmenudirective>
             </div>
 
-            <div class="col-v4">
-                <button type="button" ng-click="run(null)" class="btn btn-primary btn-wasdi"
-                    ng-disabled="m_oController.isFileChosen()" ng-show="m_oController.m_bIsUploading === false"
-                    style=" position: absolute; right: 20px;">
-                    Upload file
-                </button>
-            </div>
         </div>
 
-
-
-
+        <div class="col-v4-3">
+            <button type="button" ng-click="run(null)" class="btn btn-primary btn-wasdi"
+                ng-disabled="m_oController.isFileChosen()" ng-show="m_oController.m_bIsUploading === false"
+                style=" position: absolute; right: 20px;">
+                Upload file
+            </button>
+        </div>
     </div>
+
+
+
+
+</div>
 
 </div>
