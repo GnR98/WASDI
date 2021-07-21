@@ -1,28 +1,11 @@
 package it.fadeout.rest.resources;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FilenameFilter;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.nio.charset.StandardCharsets;
-import java.util.*;
-import java.util.concurrent.atomic.AtomicBoolean;
-
-import javax.servlet.ServletConfig;
-import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import it.fadeout.Wasdi;
 import org.apache.commons.io.FileUtils;
 import org.glassfish.jersey.media.multipart.FormDataParam;
-
-import it.fadeout.Wasdi;
 import wasdi.shared.LauncherOperations;
 import wasdi.shared.business.DownloadedFile;
 import wasdi.shared.business.ProductWorkspace;
@@ -39,7 +22,21 @@ import wasdi.shared.rabbit.Send;
 import wasdi.shared.utils.PermissionsUtils;
 import wasdi.shared.utils.SerializationUtils;
 import wasdi.shared.utils.Utils;
-import wasdi.shared.viewmodels.*;
+import wasdi.shared.viewmodels.GeorefProductViewModel;
+import wasdi.shared.viewmodels.MetadataViewModel;
+import wasdi.shared.viewmodels.PrimitiveResult;
+import wasdi.shared.viewmodels.ProductViewModel;
+
+import javax.servlet.ServletConfig;
+import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
 
 @Path("/product")
 public class ProductResource {
@@ -963,7 +960,7 @@ public class ProductResource {
         try {
             // Domain Check
             if (oUser == null) {
-                Utils.debugLog("ProductResource.DeleteProduct: invalid session");
+                Utils.debugLog("ProductResource.getStyle: invalid session");
                 return null;
             }
             if (Utils.isNullOrEmpty(oUser.getUserId())) {
@@ -1005,6 +1002,122 @@ public class ProductResource {
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
+
+        return null;
+    }
+    /** CALL PROPOSAL :
+     *      * 1 - Ask only to the main node
+     *      * 2 - Get only the file names from the styles folder
+     */
+
+    /**
+     * Retrieves the available styles from the GeoServer instance of the main node.
+     * Uses the configuration on the server to use the Geoserver Api
+     *
+     * @param sSessionId The session of the current user
+     * @return a List of the available style on the current server
+     */
+    @GET
+    @Path("stylesmaingeoserver")
+    public List<String> getStyleFromMainGeoserver(@HeaderParam("x-session-token") String sSessionId) {
+        // Check session
+        User oUser = Wasdi.getUserFromSession(sSessionId);
+        try {
+            // Domain Check
+            if (oUser == null) {
+                Utils.debugLog("ProductResource.getStyle: invalid session");
+                return null;
+            }
+            if (Utils.isNullOrEmpty(oUser.getUserId())) {
+                String sMessage = "user not found";
+                Utils.debugLog("ProductResource.DeleteProduct: " + sMessage);
+            }
+            String sGeoServerUrl = "https://www.wasdi.net/geoserver";
+            String sGeoServerUser = m_oServletConfig.getInitParameter("GS_USER");
+            String sGeoServerPwd = m_oServletConfig.getInitParameter("GS_PASSWORD");
+
+            String sUrl = sGeoServerUrl + "/rest/styles.json";
+            String auth = sGeoServerUser + ":" + sGeoServerPwd;
+
+            String sEncodedAuth = Base64.getEncoder().encodeToString(auth.getBytes(StandardCharsets.UTF_8));
+
+            // Authorization header
+            HashMap<String, String> asHeaders = new HashMap<>();
+            asHeaders.put("Authorization", "Basic " + sEncodedAuth);
+            String sResponse = Wasdi.httpGet(sUrl, asHeaders);
+
+            // make call to GeoServer instance
+            ObjectMapper s_oMapper = new ObjectMapper();
+            GeoServerStyle oStyles = s_oMapper.readValue(sResponse, GeoServerStyle.class);
+            if (oStyles == null) return null;
+
+            if (oStyles.getStyles().getStyle() != null && oStyles.getStyles().getStyle().size() > 0) {
+                ArrayList<String> asReturnList = new ArrayList<>();
+                for (GeoServerStyle.Style oStyle : oStyles.getStyles().getStyle()) {
+                    asReturnList.add(oStyle.getName());
+                }
+                return asReturnList;
+            }
+
+            return new ArrayList<>(); // no resource
+
+        } catch (JsonMappingException e) {
+            e.printStackTrace();
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+
+    /**
+     * Retrieves the available styles from the *.sld files
+     * available on the current instance of WASDI main node.
+     * Use the configuration on the server to get the location of the directory
+     *
+     * @param sSessionId The session of the current user
+     * @return a List of the available style on the current server
+     */
+    @GET
+    @Path("stylesfromfiles")
+    public List<String> getStyleFromMainNode(@HeaderParam("x-session-token") String sSessionId) {
+        // Check session
+        User oUser = Wasdi.getUserFromSession(sSessionId);
+        try {
+            // Domain Check
+            if (oUser == null) {
+                Utils.debugLog("ProductResource.getStyle: invalid session");
+                return null;
+            }
+            if (Utils.isNullOrEmpty(oUser.getUserId())) {
+                String sMessage = "user not found";
+                Utils.debugLog("ProductResource.DeleteProduct: " + sMessage);
+            }
+            String sNodeCode = m_oServletConfig.getInitParameter("NODECODE");
+            String sDownloadRootPath = m_oServletConfig.getInitParameter("DownloadRootPath");
+            String sResponse;
+            // I am the main node:
+            if (sNodeCode.equals("wasdi")){
+                File oStyleDirectory = new File(sDownloadRootPath + "/styles");
+                return Arrays.stream(oStyleDirectory.listFiles())
+                        .map(
+                        file -> file.getName().replace(".sld", "")
+                        ).collect(Collectors.toList());
+
+            }
+            // I'm not the main node
+            else{
+                // make this call on
+                String sUrl = "http://www.wasdi.net/wasdiwebserver/rest/product/stylesfromfile";
+                HashMap<String, String> asHeaders = new HashMap<>();
+                asHeaders.put("x-session-token", sSessionId);
+                sResponse = Wasdi.httpGet(sUrl, asHeaders);
+                return Arrays.asList(new ObjectMapper().readValue(sResponse,String[].class));
+
+            }
+
+        } catch (Exception e){}
 
         return null;
     }
