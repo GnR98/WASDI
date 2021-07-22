@@ -3327,9 +3327,10 @@ public class LauncherMain implements ProcessWorkspaceUpdateSubscriber {
 	
 	
 	/**
-	 * Download Processor on the local PC
-	 * @param oProcessor
-	 * @param sSessionId
+	 * Download a style from the main node
+	 * @param sStyle String that identifies the style
+	 * @param sSessionId the current session id
+	 * @param sDestinationFileFullPath the path where the style will be saved
 	 * @return
 	 */
 	protected String downloadStyle(String sStyle, String sSessionId, String sDestinationFileFullPath) {
@@ -3347,7 +3348,7 @@ public class LauncherMain implements ProcessWorkspaceUpdateSubscriber {
 			
 			String sBaseUrl = "https://www.wasdi.net/wasdiwebserver/rest";
 
-		    String sUrl = sBaseUrl + "/filebuffer/downloadstyle?style="+sStyle;
+		    String sUrl = sBaseUrl + "/style/download?style="+sStyle;
 		    
 		    HashMap<String, String> asHeaders = WasdiProcessorEngine.getStandardHeaders(sSessionId);
 			
