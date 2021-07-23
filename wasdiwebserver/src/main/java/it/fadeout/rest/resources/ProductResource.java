@@ -529,7 +529,10 @@ public class ProductResource {
     @POST
     @Path("/uploadfile")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
-    public Response uploadFile(@FormDataParam("file") InputStream fileInputStream, @HeaderParam("x-session-token") String sSessionId, @QueryParam("workspace") String sWorkspaceId, @QueryParam("name") String sName) throws Exception {
+    public Response uploadFile(@FormDataParam("file") InputStream fileInputStream,
+                               @HeaderParam("x-session-token") String sSessionId,
+                               @QueryParam("workspace") String sWorkspaceId,
+                               @QueryParam("name") String sName) throws Exception {
         Utils.debugLog("ProductResource.uploadfile( InputStream, WS: " + sWorkspaceId + ", Name: " + sName + " )");
 
         // before any operation check that this is not an injection attempt from the user
