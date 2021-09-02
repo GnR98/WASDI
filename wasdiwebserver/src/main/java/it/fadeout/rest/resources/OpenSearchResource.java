@@ -16,6 +16,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import it.fadeout.Wasdi;
 import wasdi.shared.business.User;
 import wasdi.shared.opensearch.PaginatedQuery;
@@ -42,7 +44,8 @@ public class OpenSearchResource {
 		m_aoCredentials = new HashMap<>();
 	}
 
-	@Context
+	//@Context
+	@Autowired
 	ServletConfig m_oServletConfig;
 	
 

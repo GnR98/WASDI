@@ -17,6 +17,7 @@ import javax.ws.rs.core.Response;
 
 import org.apache.commons.io.FileUtils;
 import org.glassfish.jersey.media.multipart.FormDataParam;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import it.fadeout.Wasdi;
 import wasdi.shared.LauncherOperations;
@@ -42,7 +43,8 @@ import wasdi.shared.viewmodels.ProductViewModel;
 @Path("/product")
 public class ProductResource {
 
-    @Context
+	//@Context
+	@Autowired
     ServletConfig m_oServletConfig;
 
     @GET

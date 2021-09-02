@@ -17,6 +17,8 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import com.fasterxml.jackson.core.type.TypeReference;
 
 import it.fadeout.Wasdi;
@@ -44,7 +46,8 @@ import wasdi.shared.viewmodels.ProcessWorkspaceViewModel;
 @Path("/process")
 public class ProcessWorkspaceResource {
 	
-	@Context
+	//@Context
+	@Autowired
 	ServletConfig m_oServletConfig;	
 
 	

@@ -24,6 +24,7 @@ import org.nfs.orbits.sat.SatFactory;
 import org.nfs.orbits.sat.SatSensor;
 import org.nfs.orbits.sat.Satellite;
 import org.nfs.orbits.sat.SwathArea;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import de.micromata.opengis.kml.v_2_2_0.AltitudeMode;
 import de.micromata.opengis.kml.v_2_2_0.Boundary;
@@ -47,7 +48,8 @@ import wasdi.shared.utils.Utils;
 
 @Path("/searchorbit")
 public class OpportunitySearchResource {
-	@Context
+	//@Context
+	@Autowired
 	ServletConfig m_oServletConfig;
 
 	CredentialPolicy m_oCredentialPolicy = new CredentialPolicy();

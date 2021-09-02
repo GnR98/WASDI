@@ -34,6 +34,7 @@ import java.util.zip.ZipOutputStream;
 import javax.annotation.PostConstruct;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
+import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Context;
 
 import org.apache.commons.io.FileUtils;
@@ -44,7 +45,11 @@ import org.esa.snap.runtime.Config;
 import org.esa.snap.runtime.Engine;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Component;
 
+import it.fadeout.rest.resources.AuthResource;
 import wasdi.shared.business.Node;
 import wasdi.shared.business.ProcessStatus;
 import wasdi.shared.business.ProcessWorkspace;
@@ -66,17 +71,21 @@ import wasdi.shared.utils.Utils;
 import wasdi.shared.utils.WasdiFileUtils;
 import wasdi.shared.viewmodels.PrimitiveResult;
 
+//@Component
+@Configuration
+@ApplicationPath("/rest/*")
 public class Wasdi extends ResourceConfig {
 	
 	private static final String s_SNFS_DATA_DOWNLOAD = "nfs.data.download";
 
 	private static final String s_sWASDINAME = "wasdi";
 
-	@Context
+	//@Context
+	@Autowired
 	ServletConfig m_oServletConfig;
 
-	@Context
-	ServletContext m_oContext;
+//	@Context
+//	ServletContext m_oContext;
 
 
 	/**
@@ -121,8 +130,12 @@ public class Wasdi extends ResourceConfig {
 	}
 
 	public Wasdi() {
+		Utils.debugLog("----------- Wasdi.Wasdi");
 		register(new WasdiBinder());
-		packages(true, "it.fadeout.rest.resources");
+		packages(true, "it.fadeout.rest.resources", "it.fadeout.business", "it.fadeout.viewmodels");
+		register(AuthResource.class);
+
+		property("jersey.config.server.provider.classnames", "org.glassfish.jersey.media.multipart.MultiPartFeature");
 	}
 
 	@PostConstruct
@@ -148,7 +161,13 @@ public class Wasdi extends ResourceConfig {
 		try {
 
 			MongoRepository.SERVER_ADDRESS = getInitParameter("MONGO_ADDRESS", "127.0.0.1");
-			MongoRepository.SERVER_PORT = Integer.parseInt(getInitParameter("MONGO_PORT", "27017"));
+
+			String mongoPortAsString = getInitParameter("MONGO_PORT", "27017");
+			System.out.println("mongoPortAsString: " + mongoPortAsString);
+			int mongoPortAsInt = Integer.parseInt(mongoPortAsString);
+			System.out.println("mongoPortAsInt: " + mongoPortAsInt);
+
+			MongoRepository.SERVER_PORT = mongoPortAsInt;
 			MongoRepository.DB_NAME = getInitParameter("MONGO_DBNAME", Wasdi.s_sWASDINAME);
 			MongoRepository.DB_USER = getInitParameter("MONGO_DBUSER", "mongo");
 			MongoRepository.DB_PWD = getInitParameter("MONGO_DBPWD", "mongo");
@@ -311,6 +330,7 @@ public class Wasdi extends ResourceConfig {
 	 */
 	private String getInitParameter(String sParmaneter, String sDefault) {
 		String sParameterValue = m_oServletConfig.getInitParameter(sParmaneter);
+		System.out.println("sParmaneter: " + sParmaneter + "; sParameterValue: " + sParameterValue + "; sDefault: " + sDefault + ".");
 		return sParameterValue == null ? sDefault : sParameterValue;
 	}
 
@@ -700,6 +720,7 @@ public class Wasdi extends ResourceConfig {
 	 * @return server response
 	 */
 	public static String httpPost(String sUrl, String sPayload, Map<String, String> asHeaders, String sAuth) {
+		Utils.debugLog("----------- Wasdi.httpPost");
 
 		try {
 			URL oURL = new URL(sUrl);

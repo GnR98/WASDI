@@ -6,13 +6,16 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import wasdi.shared.utils.Utils;
 import wasdi.shared.viewmodels.PrimitiveResult;
 
 @Path("wasdi")
 public class WasdiResource {
 
-	@Context
+	//@Context
+	@Autowired
 	ServletConfig m_oServletConfig;
 
 	@GET

@@ -41,6 +41,7 @@ import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.Response.Status;
 
 import org.glassfish.jersey.media.multipart.FormDataParam;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import it.fadeout.Wasdi;
 import it.fadeout.business.ImageResourceUtils;
@@ -91,7 +92,8 @@ import wasdi.shared.viewmodels.RunningProcessorViewModel;
 @Path("/processors")
 public class ProcessorsResource  {
 	
-	@Context
+	//@Context
+	@Autowired
 	ServletConfig m_oServletConfig;
 	
 	/**

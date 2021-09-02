@@ -53,6 +53,7 @@ import org.esa.snap.core.jexp.impl.Tokenizer;
 import org.esa.snap.rcp.imgfilter.model.Filter;
 import org.esa.snap.rcp.imgfilter.model.StandardFilters;
 import org.glassfish.jersey.media.multipart.FormDataParam;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.bc.ceres.binding.PropertyContainer;
 
@@ -101,7 +102,8 @@ import wasdi.shared.viewmodels.WpsViewModel;
 @Path("/processing")
 public class ProcessingResources {
 
-    @Context
+	//@Context
+	@Autowired
     ServletConfig m_oServletConfig;
 
     CredentialPolicy m_oCredentialPolicy = new CredentialPolicy();

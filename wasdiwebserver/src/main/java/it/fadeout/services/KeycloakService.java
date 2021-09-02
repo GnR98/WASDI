@@ -8,6 +8,8 @@ import javax.ws.rs.core.Context;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import it.fadeout.Wasdi;
 import wasdi.shared.business.User;
@@ -15,9 +17,11 @@ import wasdi.shared.utils.TimeEpochUtils;
 import wasdi.shared.utils.Utils;
 import wasdi.shared.viewmodels.PrimitiveResult;
 
+@Component
 public class KeycloakService implements AuthProviderService {
 
-	@Context
+	//@Context
+	@Autowired
 	ServletConfig m_oServletConfig;
 
 	private static final String s_sACCESS_TOKEN = "access_token";
@@ -26,6 +30,7 @@ public class KeycloakService implements AuthProviderService {
 	//private KeycloakService() {}
 
 	public String getToken() {
+		Utils.debugLog("----------- KeycloakService.getToken");
 		try {
 			String sAuthUrl = m_oServletConfig.getInitParameter("keycloak_server");
 			String sCliSecret = m_oServletConfig.getInitParameter("keycloak_CLI_Secret");
@@ -87,6 +92,7 @@ public class KeycloakService implements AuthProviderService {
 
 	@Override
 	public String login(String sUser, String sPassword) {
+		Utils.debugLog("----------- KeycloakService.login");
 		//authenticate against keycloak
 		String sUrl = m_oServletConfig.getInitParameter("keycloak_auth");
 

@@ -7,11 +7,15 @@ import wasdi.shared.data.NodeRepository;
 import javax.inject.Inject;
 import javax.servlet.ServletConfig;
 import javax.ws.rs.core.Context;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
 import java.util.Arrays;
 
 public class ConfigProvidersCatalog implements ProvidersCatalog {
 
-    @Context
+	//@Context
+	@Autowired
     ServletConfig m_oServletConfig;
 
     @Inject

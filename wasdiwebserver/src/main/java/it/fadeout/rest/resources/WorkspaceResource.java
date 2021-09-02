@@ -20,6 +20,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import org.apache.commons.io.FileUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import it.fadeout.Wasdi;
 import it.fadeout.mercurius.business.Message;
@@ -55,7 +56,8 @@ public class WorkspaceResource {
 	private CredentialPolicy m_oCredentialPolicy = new CredentialPolicy();
 	private WorkspacePolicy m_oWorkspacePolicy = new WorkspacePolicy();
 
-	@Context
+	//@Context
+	@Autowired
 	ServletConfig m_oServletConfig;
 
 	@GET
@@ -222,7 +224,7 @@ public class WorkspaceResource {
 	}
 
 	@GET
-	@Path("")
+//	@Path("")
 	@Produces({ "application/xml", "application/json", "text/xml" })
 	public WorkspaceEditorViewModel getWorkspaceEditorViewModel(@HeaderParam("x-session-token") String sSessionId,
 			@QueryParam("sWorkspaceId") String sWorkspaceId) {

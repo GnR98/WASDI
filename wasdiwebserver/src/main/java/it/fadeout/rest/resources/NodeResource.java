@@ -10,6 +10,8 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import it.fadeout.Wasdi;
 import wasdi.shared.business.Node;
 import wasdi.shared.business.User;
@@ -24,7 +26,8 @@ public class NodeResource {
 	private CredentialPolicy m_oCredentialPolicy = new CredentialPolicy();
 	private WorkspacePolicy m_oWorkspacePolicy = new WorkspacePolicy();
 	
-	@Context
+	//@Context
+	@Autowired
 	ServletConfig m_oServletConfig;
 	
 	@GET

@@ -30,6 +30,7 @@ import javax.ws.rs.core.Response.Status;
 import org.apache.commons.io.FilenameUtils;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.google.common.io.Files;
 
@@ -55,7 +56,8 @@ import wasdi.shared.viewmodels.ReviewViewModel;
 @Path("processormedia")
 public class ProcessorsMediaResource {
 	
-	@Context
+	//@Context
+	@Autowired
 	ServletConfig m_oServletConfig;
 	
 	public static int MAX_IMAGE_MB_SIZE = 2;

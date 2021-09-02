@@ -27,6 +27,7 @@ import org.esa.snap.core.gpf.graph.Graph;
 import org.esa.snap.core.gpf.graph.GraphIO;
 import org.esa.snap.core.gpf.graph.Node;
 import org.glassfish.jersey.media.multipart.FormDataParam;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import it.fadeout.Wasdi;
 import it.fadeout.business.Provider;
@@ -51,7 +52,8 @@ import wasdi.shared.viewmodels.RabbitMessageViewModel;
 @Path("/filebuffer")
 public class FileBufferResource {
 
-	@Context
+	//@Context
+	@Autowired
 	ServletConfig m_oServletConfig;
 
 	@Inject

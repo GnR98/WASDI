@@ -26,6 +26,8 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.Response.Status;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import it.fadeout.Wasdi;
 import it.fadeout.rest.resources.largeFileDownload.FileStreamingOutput;
 import it.fadeout.rest.resources.largeFileDownload.ZipStreamingOutput;
@@ -54,7 +56,8 @@ public class CatalogResources {
 
 	CredentialPolicy m_oCredentialPolicy = new CredentialPolicy();
 
-	@Context
+	//@Context
+	@Autowired
 	ServletConfig m_oServletConfig;
 
 
@@ -538,7 +541,7 @@ public class CatalogResources {
 
 
 	@GET
-	@Path("")
+//	@Path("")
 	@Produces({"application/xml", "application/json", "text/xml"})
 	public ArrayList<CatalogViewModel> getCatalogs(@HeaderParam("x-session-token") String sSessionId, @QueryParam("sWorkspaceId") String sWorkspaceId) {
 
