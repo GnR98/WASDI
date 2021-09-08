@@ -3,9 +3,12 @@ package wasdi.shared.data;
 import java.io.IOException;
 import java.time.Instant;
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.regex.Pattern;
 
 import com.mongodb.client.AggregateIterable;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.Aggregates;
 import org.bson.Document;
 import org.bson.conversions.Bson;
@@ -67,7 +70,7 @@ public class ProcessWorkspaceRepository extends MongoRepository {
     /**
      * Insert a list of Process Workspace Objects
      *
-     * @param oProcessWorkspace Process Workpsace list to insert
+     * @param aoProcessWorkspace Process Workpsace list to insert
      */
     public void insertProcessListWorkspace(List<ProcessWorkspace> aoProcessWorkspace) {
 
@@ -157,7 +160,7 @@ public class ProcessWorkspaceRepository extends MongoRepository {
     /**
      * Delete Process Workspace by WASDI ID
      *
-     * @param sProcessObjId
+     * @param sWorkspaceId
      * @return
      */
     public boolean deleteProcessWorkspaceByWorkspaceId(String sWorkspaceId) {
@@ -180,10 +183,6 @@ public class ProcessWorkspaceRepository extends MongoRepository {
      * Get List of Process Workspaces in a Workspace
      *
      * @param sWorkspaceId unique id of the workspace
-     * @param eStatus      the status of the process
-     * @param eOperation   the type of Launcher Operation
-     * @param oDateFRom    starting date (included)
-     * @param oDateTo      ending date (included)
      * @return list of results
      */
     public List<ProcessWorkspace> getProcessByWorkspace(String sWorkspaceId) {
@@ -886,7 +885,7 @@ public class ProcessWorkspaceRepository extends MongoRepository {
     /**
      * Get the list of processes in a specific state in a specific node
      *
-     * @param sProcessStatus     status of the process
+     * @param sOrderBy
      * @param sComputingNodeCode computing node
      * @return
      */
@@ -1378,12 +1377,7 @@ public class ProcessWorkspaceRepository extends MongoRepository {
     /**
      * Get List of Process Workspaces in a Workspace
      *
-     * @param sWorkspaceId          Workspace
-     * @param eStatus               State
-     * @param eOperation            Op type
-     * @param sProductNameSubstring Product Name
-     * @param oDateFRom             Start Date
-     * @param oDateTo               End Date
+     * @param sParentId
      * @return Found processworkspaces with applied filters
      */
     public List<ProcessWorkspace> getProcessByParentId(String sParentId) {
@@ -1433,23 +1427,32 @@ public class ProcessWorkspaceRepository extends MongoRepository {
         final ArrayList<ProcessWorkspace> aoReturnList = new ArrayList<ProcessWorkspace>();
         try {
 
+            Bson graphluccapp = Aggregates.graphLookup(
+                    "processworkpsace",
+                    "$processObjId",
+                    "processObjId",
+                    "parentId",
+                    "children");
+            Bson mecc = Aggregates.match(Filters.eq("processObjId", sParentId));
+
             AggregateIterable<Document> oWSDocuments = getCollection(m_sThisCollection).aggregate(
-                    Arrays.asList(
-                            Aggregates.graphLookup("processworkpsace",
-                                    "processObjId",
-                                    "processObjId",
-                                    "parentId",
-                                    "children"),
-                            Aggregates.match(Filters.eq(sParentId))
+                    Arrays.asList( // pipeline
+
+                            graphluccapp,
+                            mecc
+
                     )
 
             );
+            MongoCursor<Document> iterator = oWSDocuments.iterator();
 
+            Document next = iterator.next();
 
-            oWSDocuments.forEach((Block<Document>) document -> { // apply
-                Object children = document.get("children"); // this is an array ?
+            System.out.println(next);
+            ArrayList<Document> children = (ArrayList<Document>) next.get("children");
 
-                String sJSON = document.toJson();
+            for (Document child1 : children) {
+                String sJSON = child1.toJson();
                 ProcessWorkspace oProcessWorkspace = null;
                 try {
                     oProcessWorkspace = s_oMapper.readValue(sJSON, ProcessWorkspace.class);
@@ -1457,9 +1460,7 @@ public class ProcessWorkspaceRepository extends MongoRepository {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-
-            });
-
+            }
 
         } catch (Exception oEx) {
             oEx.printStackTrace();

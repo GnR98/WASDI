@@ -1181,8 +1181,8 @@ public class ProcessWorkspaceResource {
 	@GET
 	@Path("/processtree")
 	@Produces({"application/xml", "application/json", "text/xml"})
-	public String getProcessTree(@HeaderParam("x-session-token") String sSessionId, @QueryParam("processObjId") String sParentId) {
-		Utils.debugLog("ProcessWorkspaceResource.getPayload(" + sParentId + " )" );
+	public List<ProcessWorkspace> getProcessTree(@HeaderParam("x-session-token") String sSessionId, @QueryParam("processObjId") String sParentId) {
+		Utils.debugLog("ProcessWorkspaceResource.getProcessTree(" + sParentId + " )" );
 		try {
 			if(Utils.isNullOrEmpty(sSessionId)) {
 				Utils.debugLog("ProcessWorkspaceResource.getProcessTree: session is null or empty, aborting");
@@ -1196,27 +1196,12 @@ public class ProcessWorkspaceResource {
 			if(PermissionsUtils.canUserAccessProcess(oUser.getUserId(), sParentId)) {
 				ProcessWorkspaceRepository oProcessWorkspaceRepository = new ProcessWorkspaceRepository();
 
-				oProcessWorkspaceRepository.getProcessTree(sParentId);
-				/*TreeNode<String> root = new TreeNode<>("sParentId");
-				List<ProcessWorkspace> aoSibilingList;
-				do {
+				List<ProcessWorkspace> processTree = oProcessWorkspaceRepository.getProcessTree(sParentId);
 
-					aoSibilingList = oProcessWorkspaceRepository.getProcessByParentId(sParentId);
-					for (ProcessWorkspace a : aoSibilingList) {
+				System.out.println("i have a process tree ! ");
+				System.out.println(processTree);
+				return processTree;
 
-					}
-				}while (!(aoSibilingList.size()==0));
-				//JSONObject -> sciacca pumellu by Cristiano
-
-				while (aoSibilingList.size()>0) {
-					// 2 conditions :
-					// 1 - IF the subprocess ID = 0 -> Leaf NODE !
-					// 2 - ELSE GET LIST of SUBPROCESSES
-					// if condition 1 and 2 are not met -> ERROR !
-					aoSibilingList = oProcessWorkspaceRepository.getProcessByParentId(sParentId);
-
-
-				}*/
 			} else {
 				Utils.debugLog("ProcessWorkspaceResource.getProcessTree: user " + oUser.getUserId() + " cannot access process obj id " + sParentId );
 			}
@@ -1226,38 +1211,5 @@ public class ProcessWorkspaceResource {
 
 		return null;
 	}
-
-	/*public class TreeNode<T>  {
-
-		T data;
-		TreeNode<T> parent;
-		List<TreeNode<T>> children;
-
-		public TreeNode(T data) {
-			this.data = data;
-			this.children = new LinkedList<TreeNode<T>>();
-		}
-
-		public TreeNode<T> addChild(T child) {
-			TreeNode<T> childNode = new TreeNode<T>(child);
-			childNode.parent = this;
-			this.children.add(childNode);
-			return childNode;
-		}
-
-		public boolean populate(T curnode){
-
-			if (curnode instanceof ProcessWorkspace){
-				// checks instance type
-				if (((ProcessWorkspace) curnode).getSubprocessPid() != 0){ // check if this is a Leaf Node
-
-				}
-			}
-
-			return true;}
-
-
-	}*/
-
 
 }
