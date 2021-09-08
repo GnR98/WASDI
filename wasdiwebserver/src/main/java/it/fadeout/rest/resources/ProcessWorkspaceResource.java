@@ -1195,6 +1195,8 @@ public class ProcessWorkspaceResource {
 			}
 			if(PermissionsUtils.canUserAccessProcess(oUser.getUserId(), sParentId)) {
 				ProcessWorkspaceRepository oProcessWorkspaceRepository = new ProcessWorkspaceRepository();
+
+				oProcessWorkspaceRepository.getProcessTree(sParentId);
 				/*TreeNode<String> root = new TreeNode<>("sParentId");
 				List<ProcessWorkspace> aoSibilingList;
 				do {
