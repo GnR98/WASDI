@@ -1,11 +1,7 @@
 package it.fadeout.rest.resources;
 
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import javax.servlet.ServletConfig;
 import javax.ws.rs.GET;
@@ -1173,4 +1169,93 @@ public class ProcessWorkspaceResource {
 		
 		return null;
 	}
+
+
+	/**
+	 * Returns a process tree in json format starting from a root process objectId.
+	 * @param sSessionId The current session of the user
+	 * @param sParentId The process object Id to be searched for
+	 * @return a Json containing the main process information and their children view models in
+	 * a tree format
+	 */
+	@GET
+	@Path("/processtree")
+	@Produces({"application/xml", "application/json", "text/xml"})
+	public String getProcessTree(@HeaderParam("x-session-token") String sSessionId, @QueryParam("processObjId") String sParentId) {
+		Utils.debugLog("ProcessWorkspaceResource.getPayload(" + sParentId + " )" );
+		try {
+			if(Utils.isNullOrEmpty(sSessionId)) {
+				Utils.debugLog("ProcessWorkspaceResource.getProcessTree: session is null or empty, aborting");
+				return null;
+			}
+			User oUser = Wasdi.getUserFromSession(sSessionId);
+			if(null == oUser) {
+				Utils.debugLog("ProcessWorkspaceResource.getProcessTree: invalid session" );
+				return null;
+			}
+			if(PermissionsUtils.canUserAccessProcess(oUser.getUserId(), sParentId)) {
+				ProcessWorkspaceRepository oProcessWorkspaceRepository = new ProcessWorkspaceRepository();
+				/*TreeNode<String> root = new TreeNode<>("sParentId");
+				List<ProcessWorkspace> aoSibilingList;
+				do {
+
+					aoSibilingList = oProcessWorkspaceRepository.getProcessByParentId(sParentId);
+					for (ProcessWorkspace a : aoSibilingList) {
+
+					}
+				}while (!(aoSibilingList.size()==0));
+				//JSONObject -> sciacca pumellu by Cristiano
+
+				while (aoSibilingList.size()>0) {
+					// 2 conditions :
+					// 1 - IF the subprocess ID = 0 -> Leaf NODE !
+					// 2 - ELSE GET LIST of SUBPROCESSES
+					// if condition 1 and 2 are not met -> ERROR !
+					aoSibilingList = oProcessWorkspaceRepository.getProcessByParentId(sParentId);
+
+
+				}*/
+			} else {
+				Utils.debugLog("ProcessWorkspaceResource.getProcessTree: user " + oUser.getUserId() + " cannot access process obj id " + sParentId );
+			}
+		}catch (Exception oE) {
+			Utils.debugLog("ProcessWorkspaceResource.getPayload: " + oE );
+		}
+
+		return null;
+	}
+
+	/*public class TreeNode<T>  {
+
+		T data;
+		TreeNode<T> parent;
+		List<TreeNode<T>> children;
+
+		public TreeNode(T data) {
+			this.data = data;
+			this.children = new LinkedList<TreeNode<T>>();
+		}
+
+		public TreeNode<T> addChild(T child) {
+			TreeNode<T> childNode = new TreeNode<T>(child);
+			childNode.parent = this;
+			this.children.add(childNode);
+			return childNode;
+		}
+
+		public boolean populate(T curnode){
+
+			if (curnode instanceof ProcessWorkspace){
+				// checks instance type
+				if (((ProcessWorkspace) curnode).getSubprocessPid() != 0){ // check if this is a Leaf Node
+
+				}
+			}
+
+			return true;}
+
+
+	}*/
+
+
 }
