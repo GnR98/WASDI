@@ -1198,8 +1198,6 @@ public class ProcessWorkspaceResource {
 
 				List<ProcessWorkspace> processTree = oProcessWorkspaceRepository.getProcessTree(sParentId);
 
-				System.out.println("i have a process tree ! ");
-				System.out.println(processTree);
 				return processTree;
 
 			} else {
