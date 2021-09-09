@@ -1426,33 +1426,32 @@ public class ProcessWorkspaceRepository extends MongoRepository {
 
         final ArrayList<ProcessWorkspace> aoReturnList = new ArrayList<ProcessWorkspace>();
         try {
-
-            Bson graphluccapp = Aggregates.graphLookup(
+            // Creates 2 pipeline elements for the the aggregate function
+            Bson oProcessTreePipeline = Aggregates.graphLookup(
                     "processworkpsace",
                     "$processObjId",
                     "processObjId",
                     "parentId",
                     "children");
-            Bson mecc = Aggregates.match(Filters.eq("processObjId", sParentId));
-
+            Bson oMatchProcessObjIdPipeline = Aggregates.match(Filters.eq("processObjId", sParentId));
+            // Does the aggregation
             AggregateIterable<Document> oWSDocuments = getCollection(m_sThisCollection).aggregate(
-                    Arrays.asList( // pipeline
-
-                            graphluccapp,
-                            mecc
+                    Arrays.asList(
+                            oProcessTreePipeline,
+                            oMatchProcessObjIdPipeline
 
                     )
 
             );
+            // Obtain an iterator over the obtained document (just one)
             MongoCursor<Document> iterator = oWSDocuments.iterator();
-
             Document next = iterator.next();
-
-            System.out.println(next);
+            // Get the children list from an array of the documents
             ArrayList<Document> children = (ArrayList<Document>) next.get("children");
 
-            for (Document child1 : children) {
-                String sJSON = child1.toJson();
+            // De-serialize every single element in children array
+            for (Document oChildProcess : children) {
+                String sJSON = oChildProcess.toJson();
                 ProcessWorkspace oProcessWorkspace = null;
                 try {
                     oProcessWorkspace = s_oMapper.readValue(sJSON, ProcessWorkspace.class);
