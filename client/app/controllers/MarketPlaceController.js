@@ -14,7 +14,7 @@ var MarketPlaceController = (function() {
      * @param oProcessorMediaService
      * @constructor
      */
-    function MarketPlaceController($scope, $state, oConstantsService, oAuthService, oProcessorService, oProcessorMediaService) {
+    function MarketPlaceController($scope, $state, $window, oConstantsService, oAuthService, oProcessorService, oProcessorMediaService) {
         /**
          * Angular Scope
          */
@@ -24,6 +24,13 @@ var MarketPlaceController = (function() {
          * Appication State
          */
         this.m_oState=$state;
+
+        /**
+         * window object from browser 
+         * 
+         */
+        this.m_oWindow= $window;
+
         /**
          * Reference to the controller
          * @type {MarketPlaceController}
@@ -298,7 +305,10 @@ var MarketPlaceController = (function() {
     MarketPlaceController.prototype.openApplicationPage = function(sApplicationName) {
 
         this.m_oConstantsService.setSelectedApplication(sApplicationName);
-        this.m_oState.go("root.appdetails", { processorName : sApplicationName });
+        //this.m_oWindow.open('https://www.google.com', '_blank');
+        //this.m_oState.go("root.appdetails", { processorName : sApplicationName });
+        var url = this.m_oState.href("root.appdetails", { processorName : sApplicationName });
+        this.m_oWindow.open(url,"_blank");
         //this.m_oState.go("root.appdetails");
     }
 
@@ -365,6 +375,7 @@ var MarketPlaceController = (function() {
     MarketPlaceController.$inject = [
         '$scope',
         '$state',
+        '$window',
         'ConstantsService',
         'AuthService',
         'ProcessorService',
