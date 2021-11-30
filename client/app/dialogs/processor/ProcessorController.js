@@ -84,7 +84,7 @@ var ProcessorController = (function() {
          * Types of available processors
          * @type {({name: string, id: string}|{name: string, id: string}|{name: string, id: string})[]}
          */
-        this.m_aoProcessorTypes = [{'name':'Python 2.7','id':'ubuntu_python_snap'},{'name':'Python 3.7','id':'ubuntu_python37_snap'},{'name':'IDL 3.7.2','id':'ubuntu_idl372'},{'name':'OCTAVE 6.x','id':'octave'}];
+        this.m_aoProcessorTypes = [{'name':'Python 3.7 Pip','id':'ubuntu_python37_snap'},{'name':'IDL 3.7.2','id':'ubuntu_idl372'},{'name':'OCTAVE 6.x','id':'octave'},{'name':'Python 3.x Conda','id':'conda'}];
         /**
          * Selected Processor Type
          * @type {string}
@@ -214,11 +214,17 @@ var ProcessorController = (function() {
 
             if (oController.m_bEditMode == true) {
 
+                //new condition -> The user didn't put anything on the params
+                if (oController.m_sJSONSample == "" ) {
+                    oController.m_sJSONSample = "{}"; // suppose it was an empty JSON 
+                }
                 if (!oController.tryParseJSON(oController.m_sJSONSample)) {
                     let oDialog = utilsVexDialogAlertBottomRightCorner("PLEASE CHECK YOUR JSON<br>IN THE PARAMS SAMPLE");
                     utilsVexCloseDialogAfter(4000,oDialog);
                     return;
                 }
+                
+
 
                 if (oController.m_bUIChanged) {
                     if (!oController.tryParseJSON(oController.m_sProcessorUI)) {
@@ -239,8 +245,8 @@ var ProcessorController = (function() {
             else {
                 oController.postProcessor(oController, oController.m_oFile[0]);
             }
-
-            oClose(oController.m_oProcessorDetails, 300); // close, but give 500ms for bootstrap to animate
+            // close only if successfull?
+            //oClose(oController.m_oProcessorDetails, 300); // close, but give 500ms for bootstrap to animate
         };
 
         // Are we creating a new processor or editing an existing one?
@@ -333,7 +339,8 @@ var ProcessorController = (function() {
             return true;
         }
 
-        if (this.m_sTypeIdOnly === "ubuntu_idl372" || this.m_sTypeIdOnly === "ubuntu_python37_snap")  {
+        if (this.m_sTypeIdOnly === "ubuntu_idl372" || this.m_sTypeIdOnly === "ubuntu_python37_snap"
+        || this.m_sTypeIdOnly === "conda" || this.m_sTypeIdOnly === "octave")  {
             return true;
         }
         return false;
@@ -522,7 +529,15 @@ var ProcessorController = (function() {
                      // SHARING SAVED
                  }else
                  {
-                     utilsVexDialogAlertTop("GURU MEDITATION<br>ERROR SHARING PROCESSOR");
+                     sMessage = "GURU MEDITATION<br>ERROR SHARING PROCESSOR"
+
+                     if (utilsIsObjectNullOrUndefined(data.data) === false) {
+                         if (utilsIsObjectNullOrUndefined(data.data.stringValue) === false) {
+                             sMessage = sMessage + ": " + data.data.stringValue;
+                         }
+                     }
+
+                     utilsVexDialogAlertTop(sMessage);
                  }
                  oController.getListOfEnableUsers(sFinalProcessorId);
 
@@ -717,6 +732,9 @@ var ProcessorController = (function() {
          else if (sElementType === "textbox") {
              sTextToInsert = '\n\t{\n\t\t"param": "PARAM_NAME",\n\t\t"type": "textbox",\n\t\t"label": "description",\n\t\t"default": "",\n\t\t"required": false\n\t},';
          }
+         else if (sElementType === "numeric") {
+            sTextToInsert = '\n\t{\n\t\t"param": "PARAM_NAME",\n\t\t"type": "numeric",\n\t\t"label": "description",\n\t\t"default": "0",\n\t\t"required": false\n\t},';
+        }
          else if (sElementType === "dropdown") {
              sTextToInsert = '\n\t{\n\t\t"param": "PARAM_NAME",\n\t\t"type": "dropdown",\n\t\t"label": "description",\n\t\t"default": "",\n\t\t"values": [],\n\t\t"required": false\n\t},';
          }
@@ -733,7 +751,7 @@ var ProcessorController = (function() {
              sTextToInsert = '\n\t{\n\t\t"param": "PARAM_NAME",\n\t\t"type": "boolean",\n\t\t"label": "description",\n\t\t"default": false,\n\t\t"required": false\n\t},';
          }
          else if (sElementType === "productscombo") {
-             sTextToInsert = '\n\t{\n\t\t"param": "PARAM_NAME",\n\t\t"type": "productscombo",\n\t\t"label": "Product",\n\t\t"required": false\n\t},';
+             sTextToInsert = '\n\t{\n\t\t"param": "PARAM_NAME",\n\t\t"type": "productscombo",\n\t\t"label": "Product",\n\t\t"required": false,\n\t\t"showExtension": false\n\t},';
          }
          else if (sElementType === "searcheoimage") {
              sTextToInsert = '\n\t{\n\t\t"param": "PARAM_NAME",\n\t\t"type": "searcheoimage",\n\t\t"label": "Description",\n\t\t"required": false\n\t},';

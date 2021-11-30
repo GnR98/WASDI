@@ -218,6 +218,11 @@
 		</dependency>
 		<dependency>
 			<groupId>org.esa.s2tbx</groupId>
+			<artifactId>s2tbx-gdal-writer</artifactId>
+			<version>8.0.3</version>
+		</dependency>
+		<dependency>
+			<groupId>org.esa.s2tbx</groupId>
 			<artifactId>s2tbx-radiometric-indices</artifactId>
 			<version>8.0.3</version>
 		</dependency>
@@ -422,6 +427,21 @@
 		    <artifactId>jts</artifactId>
 		    <version>1.13</version>
 		</dependency>
+		
+		<!-- https://mvnrepository.com/artifact/edu.ucar/netcdfAll -->
+		<dependency>
+		    <groupId>edu.ucar</groupId>
+		    <artifactId>netcdfAll</artifactId>
+		    <version>5.3.1</version>
+		</dependency>
+				
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.13.1</version>
+			<scope>test</scope>
+		</dependency>
+		
 		
 	</dependencies>	
 

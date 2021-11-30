@@ -3,8 +3,8 @@
  */
 
 angular.module('wasdi.RabbitStompService', ['wasdi.RabbitStompService']).service('RabbitStompService',
-    ['$http', 'ConstantsService', '$interval', 'ProcessesLaunchedService', '$q', '$rootScope',
-        function ($http, oConstantsService, $interval, oProcessesLaunchedService, $q, $rootScope, $scope) {
+    ['$http', 'ConstantsService', '$interval', 'ProcessWorkspaceService', '$q', '$rootScope',
+        function ($http, oConstantsService, $interval, oProcessWorkspaceService, $q, $rootScope, $scope) {
 
             // Reconnection promise to stop the timer if the reconnection succeed or if the user change page
             this.m_oInterval = $interval;
@@ -28,7 +28,7 @@ angular.module('wasdi.RabbitStompService', ['wasdi.RabbitStompService']).service
             this.m_oRabbitReconnect = null;
 
             // Reference to the ProcessLaunched Service
-            this.m_oProcessesLaunchedService = oProcessesLaunchedService;
+            this.m_oProcessWorkspaceService = oProcessWorkspaceService;
 
             this.m_oSubscription = null;
             this.m_oUser = null;
@@ -129,7 +129,7 @@ angular.module('wasdi.RabbitStompService', ['wasdi.RabbitStompService']).service
                             }
 
                             // Update the process List
-                            oThisService.m_oProcessesLaunchedService.loadProcessesFromServer(sActiveWorkspaceId);
+                            oThisService.m_oProcessWorkspaceService.loadProcessesFromServer(sActiveWorkspaceId);
                         }
                     });
                 }
@@ -161,8 +161,8 @@ angular.module('wasdi.RabbitStompService', ['wasdi.RabbitStompService']).service
                 var oWebSocket = new WebSocket(this.m_oConstantsService.getStompUrl());
                 //var oWebSocket = new SockJS(this.m_oConstantsService.getStompUrl());
                 this.m_oClient = Stomp.over(oWebSocket);
-                this.m_oClient.heartbeat.outgoing = 0;
-                this.m_oClient.heartbeat.incoming = 0;
+                this.m_oClient.heartbeat.outgoing = 20000;
+                this.m_oClient.heartbeat.incoming = 20000;
                 this.m_oClient.debug = null;
 
                 /**
@@ -208,6 +208,15 @@ angular.module('wasdi.RabbitStompService', ['wasdi.RabbitStompService']).service
 
                     console.log('RabbitStompService: WEB STOMP ERROR, message:' + sMessage + ' [' + utilsGetTimeStamp() + ']');
 
+                    if (!(typeof sMessage === 'string' || sMessage instanceof String)) {
+                        if (!utilsIsObjectNullOrUndefined(sMessage.body)) {
+                            sMessage = sMessage.body;
+                        }
+                        else {
+                            return;
+                        }
+                    }
+
                     if (sMessage == "LOST_CONNECTION" || sMessage.includes("Whoops! Lost connection to"))
                     {
                         console.log('RabbitStompService: Web Socket Connection Lost');
@@ -237,14 +246,13 @@ angular.module('wasdi.RabbitStompService', ['wasdi.RabbitStompService']).service
                     _this.m_oWebSocket = new WebSocket(_this.m_oConstantsService.getStompUrl());
                     //_this.oWebSocket = new SockJS(_this.m_oConstantsService.getStompUrl());
                     _this.m_oClient = Stomp.over(_this.m_oWebSocket);
-                    _this.m_oClient.heartbeat.outgoing = 0;
-                    _this.m_oClient.heartbeat.incoming = 0;
+                    _this.m_oClient.heartbeat.outgoing = 20000;
+                    _this.m_oClient.heartbeat.incoming = 20000;
                     _this.m_oClient.debug = null;
 
                     _this.m_oClient.connect(_this.m_oConstantsService.getRabbitUser(), _this.m_oConstantsService.getRabbitPassword(), _this.m_oOn_Connect, _this.m_oOn_Error, '/');
                 };
-
-
+                
                 this.m_oRabbitReconnect = rabbit_reconnect;
                 //connect to the queue
                 this.m_oClient.connect(_this.m_oConstantsService.getRabbitUser(), _this.m_oConstantsService.getRabbitPassword(), on_connect, on_error, '/');
