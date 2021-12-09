@@ -32,10 +32,11 @@ the philosophy of safe programming is adopted as widely as possible, the lib wil
 faulty input, and print an error rather than raise an exception, so that your program can possibly go on. Please check
 the return statues
 
-Version 0.6.5
-Last Update: 02/09/2021
+Version 0.7.0
 
-Tested with: Python 2.7, Python 3.7
+Last Update: 03/12/2021
+
+Tested with: Python 3.7, Python 3.8, Python 3.9
 
 Created on 11 Jun 2018
 
@@ -44,14 +45,7 @@ Created on 11 Jun 2018
 from time import sleep
 from telnetlib import AO
 from urllib.parse import urlencode
-
-try:
-    from __builtin__ import str
-except Exception as oE0:
-    try:
-        from builtins import str
-    except Exception as oE1:
-        print('Cannot import str. This is bad')
+from builtins import str
 
 name = "wasdi"
 
@@ -87,6 +81,7 @@ m_aoParamsDictionary = {}
 
 m_sMyProcId = ''
 m_sBaseUrl = 'https://www.wasdi.net/wasdiwebserver/rest'
+#m_sBaseUrl = 'https://test.wasdi.net/wasdiwebserver/rest'
 m_bIsOnServer = False
 m_iRequestsTimeout = 2 * 60
 
@@ -519,21 +514,15 @@ def init(sConfigFilePath=None):
             _loadParams()
 
     if m_sUser is None and m_sPassword is None:
-
-        if (sys.version_info > (3, 0)):
-            m_sUser = input('[INFO] waspy.init: Please Insert WASDI User:')
-        else:
-            m_sUser = raw_input('[INFO] waspy.init: Please Insert WASDI User:')
+        
+        m_sUser = input('[INFO] waspy.init: Please Insert WASDI User:')
 
         m_sPassword = getpass.getpass(prompt='[INFO] waspy.init: Please Insert WASDI Password:', stream=None)
 
         m_sUser = m_sUser.rstrip()
         m_sPassword = m_sPassword.rstrip()
-
-        if (sys.version_info > (3, 0)):
-            sWname = input('[INFO] waspy.init: Please Insert Active Workspace Name (Enter to jump):')
-        else:
-            sWname = raw_input('[INFO] waspy.init: Please Insert Active Workspace Name (Enter to jump):')
+        
+        sWname = input('[INFO] waspy.init: Please Insert Active Workspace Name (Enter to jump):')
 
     if m_sUser is None:
         print('[ERROR] waspy.init: must initialize user first, but None given' +
@@ -767,6 +756,37 @@ def getWorkspaceIdByName(sName):
             try:
                 if oWorkspace['workspaceName'] == sName:
                     return oWorkspace['workspaceId']
+            except:
+                return ''
+
+    return ''
+
+def getWorkspaceNameById(sWorkspaceId):
+    """
+    Get Name of a Workspace from the id
+
+    :param sWorkspaceId: Workspace Id
+    :return: the Workspace Name as a String, '' if there is any error
+    """
+    global m_sBaseUrl
+    global m_sSessionId
+
+    asHeaders = _getStandardHeaders()
+
+    sUrl = m_sBaseUrl + '/ws/byuser'
+
+    try:
+        oResult = requests.get(sUrl, headers=asHeaders, timeout=m_iRequestsTimeout)
+    except Exception as oEx:
+        wasdiLog("[ERROR] there was an error contacting the API " + str(oEx))
+
+    if (oResult is not None) and (oResult.ok is True):
+        oJsonResult = oResult.json()
+
+        for oWorkspace in oJsonResult:
+            try:
+                if oWorkspace['workspaceId'] == sWorkspaceId:
+                    return oWorkspace['workspaceName']
             except:
                 return ''
 
@@ -1745,8 +1765,8 @@ def searchEOImages(sPlatform, sDateFrom, sDateTo,
 
     # todo support other platforms
     if (sPlatform != "S1") and (sPlatform != "S2") and (sPlatform != "VIIRS") and (sPlatform != "L8") and (
-            sPlatform != "ENVI"):
-        wasdiLog('[ERROR] waspy.searchEOImages: platform must be S1|S2|VIIRS|L8|ENVI. Received [' + sPlatform + ']' +
+            sPlatform != "ENVI") and (sPlatform != "S5P") and (sPlatform != "S3"): 
+        wasdiLog('[ERROR] waspy.searchEOImages: platform must be S1|S2|S3|VIIRS|L8|ENVI|S5P. Received [' + sPlatform + ']' +
                  '  ******************************************************************************')
         return aoReturnList
 
@@ -1865,12 +1885,16 @@ def searchEOImages(sPlatform, sDateFrom, sDateTo,
         sQuery += "Sentinel-2 "
     elif sPlatform == "S1":
         sQuery += "Sentinel-1"
+    elif sPlatform == "S3":
+        sQuery += "Sentinel-3"        
     elif sPlatform == "VIIRS":
         sQuery += "VIIRS"
     elif sPlatform == "L8":
         sQuery += "Landsat-*"
     elif sPlatform == "ENVI":
         sQuery += "Envisat"
+    elif sPlatform == "S5P":
+        sQuery += "Sentinel-5P"        
 
     # If available add product type
     if sProductType is not None:
