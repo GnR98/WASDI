@@ -1,18 +1,6 @@
 package wasdi.jwasdilib;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
@@ -20,17 +8,12 @@ import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.UUID;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.apache.commons.net.io.Util;
 
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -4151,7 +4134,7 @@ public class WasdiLib {
         try {
             sUrl = new StringBuilder()
                     .append(getBaseUrl())
-                    .append("/processing/conversion/sen2cot?workspace=").append(sWorkspaceId)
+                    .append("/processing/conversion/sen2cor?workspace=").append(sWorkspaceId)
                     .append("&productName=").append(sProductName);
             if (getIsOnServer()) {
                 sUrl = sUrl.append("&parent=").append(getMyProcId());
@@ -4234,4 +4217,44 @@ public class WasdiLib {
         log("wasdi: base url: " + getBaseUrl());
         log("wasdi: workspace base URL: " + getWorkspaceBaseUrl());
     }
+
+
+    public void generateConfigFile() {
+
+        try {
+            TreeMap<String, String> aoConfig = new TreeMap<>();
+            aoConfig.put("USER", "[Insert wasdi username here]");
+            aoConfig.put("PASSWORD", "[Insert Wasdi password here]");
+            aoConfig.put("WORKSPACEID", "[Insert WorkspaceID here]");
+            aoConfig.put("BASEPATH", "");
+            aoConfig.put("BASEURL", "https://test.wasdi.net/wasdiwebserver/rest");
+            aoConfig.put("SESSIONID", "");
+            aoConfig.put("MYPROCID", "");
+            aoConfig.put("PARAMETERSFILEPATH", "./parameters.txt");
+            aoConfig.put("VERBOSE", "");
+
+            StringBuffer sb = new StringBuffer();
+            // custom implementation for output
+            for (Map.Entry<String, String> entry : aoConfig.entrySet()){
+                sb.append(entry.getKey()+"="+entry.getValue()+"\n");
+            }
+            System.out.println("Generating config.properties template file, please swap values with your actual parameters");
+
+            // swap with generate file in the current directory
+            File oConfigFile = new File("config.properties");
+            oConfigFile.createNewFile();
+            FileWriter oFileWriter = new FileWriter(oConfigFile);
+            oFileWriter.write(sb.toString());
+            oFileWriter.close();
+
+            System.out.println("File config.properties created in " + oConfigFile.getAbsolutePath() );
+
+
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 }

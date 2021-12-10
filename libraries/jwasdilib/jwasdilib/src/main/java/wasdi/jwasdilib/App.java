@@ -21,7 +21,8 @@ public class App
     public static void main( String[] args )
     {
         System.out.println( "JWasdiLib Test Start" );
-        WasdiLib oLib = new WasdiLib();
+        App.testSen2Cor();
+/* REMOVE THIS COMMENT BLOCK BEFORE COMMIT        WasdiLib oLib = new WasdiLib();
                 
         String sWorkingDirectory = System.getProperty("user.dir");
         oLib.init(sWorkingDirectory + File.separator + "src" + File.separator + "main" + File.separator + "resources" + File.separator + "myConfig.properties");
@@ -84,7 +85,7 @@ public class App
         
         
         System.out.println("JWasdiLib Test Done");
-        oLib.updateStatus("DONE");
+        oLib.updateStatus("DONE");*/ // REMOVE THIS COMMENT BEFORE COMMIT
         
     }    
 
@@ -481,6 +482,14 @@ public class App
     	oLib.addParam("surname", "Monroe");
     	oLib.addParam("the answer is", "42");
 		System.out.println(oLib.getParamsAsJsonString());
+	}
+
+	private static void testSen2Cor(){
+    	WasdiLib oLib = new WasdiLib();
+    	oLib.init("C:\\Users\\m.menapace.FADEOUT\\Documents\\Fadeout\\WASDI\\libraries\\jwasdilib\\jwasdilib\\src\\config.properties");
+		List<String> productsByActiveWorkspace = oLib.getProductsByActiveWorkspace();
+		oLib.ExecuteSen2Cor("S2A_MSIL1C_20211209T101411_N0301_R022_T32TNP_20211209T110647");
+		System.out.println("done");
 	}
     
 }
