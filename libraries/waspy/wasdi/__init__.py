@@ -2876,7 +2876,7 @@ def getWorkflows():
         return None
 
 
-def executeSen2Cor(sProductName):
+def sen2cor(sProductName):
     """
     Synchronous execution of the sen2Cor convertion on the product specified
     :return:final status of the executed Sen2Cor
@@ -2885,7 +2885,7 @@ def executeSen2Cor(sProductName):
     return _internalExecuteSen2Cor(sProductName, "", False)
 
 
-def asynchExecuteSen2Cor(sProductName):
+def asynchSen2cor(sProductName):
     """
     Execute the sen2Cor convertion on the product specified
     :return: The processId of the conversion
