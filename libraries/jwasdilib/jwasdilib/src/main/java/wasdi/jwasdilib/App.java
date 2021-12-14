@@ -477,7 +477,7 @@ public class App
     	oLib.multiSubset(sInputFile, asOutputFiles, adLatN, adLonW, adLatS, adLonE);
     }
     
-    private static void testGetParamsAsJsonString(WasdiLib oLib) {
+    private static void testGetParamsAsJsoRUNIDLnString(WasdiLib oLib) {
     	oLib.addParam("name", "Marilyn");
     	oLib.addParam("surname", "Monroe");
     	oLib.addParam("the answer is", "42");
@@ -488,8 +488,17 @@ public class App
     	WasdiLib oLib = new WasdiLib();
     	oLib.init("C:\\Users\\m.menapace.FADEOUT\\Documents\\Fadeout\\WASDI\\libraries\\jwasdilib\\jwasdilib\\src\\config.properties");
 		List<String> productsByActiveWorkspace = oLib.getProductsByActiveWorkspace();
-		oLib.ExecuteSen2Cor("S2A_MSIL1C_20211209T101411_N0301_R022_T32TNP_20211209T110647");
+		productsByActiveWorkspace
+				.stream()
+				.filter(el -> el.contains("S2A_MSIL1C"))
+				.forEach(el -> {
+					oLib.asynchExecuteSen2Cor(el.replace(".zip",""));
+					}
+				);
+
 		System.out.println("done");
 	}
+
+
     
 }
