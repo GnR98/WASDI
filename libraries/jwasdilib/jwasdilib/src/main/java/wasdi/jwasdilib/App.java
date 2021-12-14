@@ -1,7 +1,6 @@
 package wasdi.jwasdilib;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -492,7 +491,7 @@ public class App
 				.stream()
 				.filter(el -> el.contains("S2A_MSIL1C"))
 				.forEach(el -> {
-					oLib.asynchExecuteSen2Cor(el.replace(".zip",""));
+					oLib.asynchSen2cor(el.replace(".zip",""));
 					}
 				);
 

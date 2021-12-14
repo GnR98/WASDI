@@ -4112,11 +4112,11 @@ public class WasdiLib {
         return null;
     }
 
-    public String ExecuteSen2Cor(String sProductName) {
+    public String sen2cor(String sProductName) {
         return internalExecuteSen2Cor(sProductName, this.getActiveWorkspace(), false);
     }
 
-    public String asynchExecuteSen2Cor(String sProductName) {
+    public String asynchSen2cor(String sProductName) {
         return internalExecuteSen2Cor(sProductName, this.getActiveWorkspace(), true);
     }
 
