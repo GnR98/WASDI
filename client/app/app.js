@@ -182,6 +182,15 @@ wasdiApp.config(['$stateProvider', '$urlRouterProvider', function($stateProvider
         }
     });
 
+        //Table test
+        $stateProvider.state('root.table',{
+            url: '/table',
+
+            views:{
+                'maincontent' : { templateUrl : 'partials/table.html'}
+            }
+        });
+
 
 }]);
 
