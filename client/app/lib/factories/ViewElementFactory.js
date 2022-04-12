@@ -632,3 +632,17 @@ class Slider extends UIComponent {
 
     };
 }
+/*
+* Matix component element
+* @constructor
+*/
+class Matrix extends UIComponent {
+    
+   constructor() {
+       super();
+       // init the row and columns labels
+       this.rowLabels = ["first" , "second"];
+       this.rowColumns = ["first" , "second"];
+       
+   }
+}
