@@ -6,10 +6,14 @@ angular.module('wasdi.wapMatrix', [])
             scope: {},
             bindToController: {
                 inputText: '=',
-                tooltip:'='
+                tooltip:'=',
+                
+
             },
-            template: `<input type="number" class="form-control"  ng-model="$ctrl.inputText" uib-tooltip="{{$ctrl.tooltip}}" tooltip-placement="right">`,
+            templateUrl:"directives/wasdiApps/wapMatrix/wapMatrix.html",
             controller: function() {
+                this.rowLabel = ["1","2"];
+
 
             },
             controllerAs: '$ctrl'

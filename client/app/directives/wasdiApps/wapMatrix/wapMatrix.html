@@ -1,0 +1,9 @@
+
+<input type="number" class="form-control"  ng-model="$ctrl.inputText" uib-tooltip="{{$ctrl.tooltip}}" tooltip-placement="right"/>
+
+{{$ctrl.tooltip}}<br>
+<div ng-repeat="a in $ctrl.rowLabel">
+    <div ng-repeat="b in $ctrl.rowLabel">
+    <input type="text" value={{a}}{{b}} />
+    </div>
+</div>

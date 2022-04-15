@@ -182,7 +182,6 @@ function ViewElementFactory() {
  */
 class UIComponent {
     constructor() {
-        //TODO remove text and defaults to empty string
         this.tooltip = "";
     }
 
@@ -651,37 +650,11 @@ class Matrix extends UIComponent {
     constructor() {
         super();
 
-        this.m_sText = "";
-        this.m_fMin = null;
-        this.m_fMax = null;
-
-        this.isValid = function(asMessages) {
-            try {
-                let fValue = parseFloat(this.m_sText)
-
-                if (utilsIsObjectNullOrUndefined(this.m_fMin)==false) {
-                    if (fValue<this.m_fMin) {
-                        asMessages.push(this.label + " - Value must be greater than " + this.m_fMin);
-                        return false;
-                    }
-                }
-
-                if (utilsIsObjectNullOrUndefined(this.m_fMax)==false) {
-                    if (fValue>this.m_fMax) {
-                        asMessages.push(this.label + " - Value must be smaller than " + this.m_fMax);
-                        return false;
-                    }
-                }                
-            }
-            catch(oError) {
-                return false;
-            }
-
-            return true;
-        }
+        this.m_sText = "hola";
+        this.rowLabel = "helo";
 
         /**
-         * Get the value of the numericbox
+         * Get the value of the Matrix
          * @returns {string} Value in the numericbox
          */
         this.getValue = function () {
