@@ -1,5 +1,5 @@
-angular.module('wasdi.wapmartix', [])
-    .directive('wapmartix', function () {
+angular.module('wasdi.wapMatrix', [])
+    .directive('wapmatrix', function () {
         "use strict";
         return {
             restrict: 'E',
@@ -8,15 +8,9 @@ angular.module('wasdi.wapmartix', [])
                 inputText: '=',
                 tooltip:'='
             },
-            template: `<div ng-repeat="row in $ctrl.rowLabels">
-             <input type="number"
-             class="form-control"  ng-model="$ctrl.inputText" 
-             uib-tooltip="{{$ctrl.tooltip}}" 
-             tooltip-placement="right" value={{row}}>
-             </div>`,
+            template: `<input type="number" class="form-control"  ng-model="$ctrl.inputText" uib-tooltip="{{$ctrl.tooltip}}" tooltip-placement="right">`,
             controller: function() {
-                this.rowLabels = ["first" , "second"];
-                this.rowColumns = ["first" , "second"];
+
             },
             controllerAs: '$ctrl'
         };

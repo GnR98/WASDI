@@ -260,6 +260,14 @@
                                         tooltip="viewElement.tooltip"></waplistbox>
                                 </div>                                
 
+                                <!--matrix -->
+                                <div class="col-xs-12 col-md-10 col-lg-8 border-bottom py-2 pb-4"
+                                    ng-if="viewElement.type === 'matrix'">
+                                    <div class="input-text-label pt-2">{{viewElement.label}}</div>
+                                    <wapmatrix input-text="viewElement.m_sText" tooltip="viewElement.tooltip">
+                                    </wapmatrix>
+                                </div>
+
                             </div>
 
                         </div>

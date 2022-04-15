@@ -26,3 +26,4 @@ require('./app/directives/chips-list/chips-list.directive.js');
 require('./app/directives/AngularLightSlider.js');
 require('./app/directives/insertableTextArea.js');
 require('./app/directives/checklist-model/checklist-model.js');
+require('./app/directives/wasdiApps/wapMatrix/wapMatrix.js');

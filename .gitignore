@@ -1227,3 +1227,6 @@ client/dist/
 libraries/c#wasdilib/WasdiLib.Client/obj/
 libraries/c#wasdilib/WasdiLib.Test/obj/
 libraries/c#wasdilib/WasdiLib/obj/
+libraries/jwasdilib/jwasdilib/src/config.properties
+libraries/jwasdilib/jwasdilib/jwasdilib.iml
+docs/.vscode/settings.json

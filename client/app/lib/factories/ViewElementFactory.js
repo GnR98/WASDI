@@ -136,6 +136,16 @@ function ViewElementFactory() {
                 oViewElement.aoElements.push(oControl.values[iValues]);
             }
         }        
+        else if (oControl.type === "matrix") {
+                        // Numeric box
+                        oViewElement = new Matrix();
+
+                        // See if we have a default
+                        if (oControl.default) {
+                            oViewElement.m_sText = parseFloat(oControl.default);
+                        }
+        
+        }
         else {
             oViewElement = new TextBox();
         }
@@ -638,11 +648,52 @@ class Slider extends UIComponent {
 */
 class Matrix extends UIComponent {
     
-   constructor() {
-       super();
-       // init the row and columns labels
-       this.rowLabels = ["first" , "second"];
-       this.rowColumns = ["first" , "second"];
-       
-   }
+    constructor() {
+        super();
+
+        this.m_sText = "";
+        this.m_fMin = null;
+        this.m_fMax = null;
+
+        this.isValid = function(asMessages) {
+            try {
+                let fValue = parseFloat(this.m_sText)
+
+                if (utilsIsObjectNullOrUndefined(this.m_fMin)==false) {
+                    if (fValue<this.m_fMin) {
+                        asMessages.push(this.label + " - Value must be greater than " + this.m_fMin);
+                        return false;
+                    }
+                }
+
+                if (utilsIsObjectNullOrUndefined(this.m_fMax)==false) {
+                    if (fValue>this.m_fMax) {
+                        asMessages.push(this.label + " - Value must be smaller than " + this.m_fMax);
+                        return false;
+                    }
+                }                
+            }
+            catch(oError) {
+                return false;
+            }
+
+            return true;
+        }
+
+        /**
+         * Get the value of the numericbox
+         * @returns {string} Value in the numericbox
+         */
+        this.getValue = function () {
+            return parseFloat(this.m_sText);
+        }
+
+        /**
+         * Get the string from the numericbox
+         * @returns {string} String in the numericbox
+         */
+        this.getStringValue = function () {
+            return this.m_sText.toString();
+        }
+    };
 }
