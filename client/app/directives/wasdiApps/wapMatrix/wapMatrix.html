@@ -1,9 +1,15 @@
-
-<input type="number" class="form-control"  ng-model="$ctrl.inputText" uib-tooltip="{{$ctrl.tooltip}}" tooltip-placement="right"/>
-
-{{$ctrl.tooltip}}<br>
-<div ng-repeat="a in $ctrl.rowLabel">
-    <div ng-repeat="b in $ctrl.rowLabel">
-    <input type="text" value={{a}}{{b}} />
+<div style="  overflow: scroll;">
+    <label style="width: 100px;">  </label>
+    <div ng-repeat="b in $ctrl.columnLabels" style="display: inline;">
+        <label style="width: 100px;"> {{b}} </label>
     </div>
+<div ng-repeat="a in $ctrl.rowLabels">
+    <label style="width: 100px;"> {{a}} </label>
+    <!--input type="text" value={{$parent.$index}}{{$index}} value={{a}}{{b}}{{$parent.$index}}{{$index}}/-->
+    <div ng-repeat="b in $ctrl.columnLabels" style="display: inline;">
+    <input type="text" style="width: 100px;" ng-model="$ctrl.matrix[$index][$parent.$index]"/>
 </div>
+</div>
+
+
+

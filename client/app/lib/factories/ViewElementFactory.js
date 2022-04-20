@@ -649,16 +649,15 @@ class Matrix extends UIComponent {
     
     constructor() {
         super();
-
-        this.m_sText = "hola";
-        this.rowLabel = "helo";
+        this.matrix = [];
+        this.rowLabels = [];
+        
 
         /**
-         * Get the value of the Matrix
-         * @returns {string} Value in the numericbox
+         * get the values of the matrix
          */
         this.getValue = function () {
-            return parseFloat(this.m_sText);
+            return this.matrix;
         }
 
         /**
@@ -666,7 +665,7 @@ class Matrix extends UIComponent {
          * @returns {string} String in the numericbox
          */
         this.getStringValue = function () {
-            return this.m_sText.toString();
+            return this.matrix.toString();
         }
     };
 }

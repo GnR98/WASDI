@@ -5,16 +5,25 @@ angular.module('wasdi.wapMatrix', [])
             restrict: 'E',
             scope: {},
             bindToController: {
-                inputText: '=',
-                tooltip:'=',
+                tooltip:'='
                 
-
             },
             templateUrl:"directives/wasdiApps/wapMatrix/wapMatrix.html",
             controller: function() {
-                this.rowLabel = ["1","2"];
-
-
+                this.rowLabels = ["A","B","C","D","E","F"];
+                this.columnLabels = ["1","2"];
+                // get number of rows and number of colums maybe 
+                let nCol = this.columnLabels.length;
+                let nRow = this.rowLabels.length;
+                this.matrix = []; 
+                for(var i=0; i<nCol; i++) {
+                    this.matrix[i] = [];
+                    for(var j=0; j<nRow; j++) {
+                        this.matrix[i][j] = 0;
+                    }
+                }
+                // test it should be 
+                console.log(this.matrix);
             },
             controllerAs: '$ctrl'
         };
